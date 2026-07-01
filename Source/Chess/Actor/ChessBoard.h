@@ -15,11 +15,15 @@ public:
 	AChessBoard();
 	
 	virtual void Tick(float DeltaTime) override;
+	
+	void SetBoardPoint(FVector2D point);
+	
+	FVector2D GetBoardPoint() const;
 
 protected:
 	virtual void BeginPlay() override;
 
 private:
 	UPROPERTY(EditAnywhere , Category = "ChessBoard")
-	TSubclassOf<AActor> ChessPoint;
+	FVector2D BoardPoint;
 };

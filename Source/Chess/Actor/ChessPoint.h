@@ -16,8 +16,12 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 	
+	void SetMesh(UStaticMesh* Mesh);
+	
 protected:
 	virtual void BeginPlay() override;
 
 private:
+	UPROPERTY(EditAnywhere, Category = ChessPoint)
+	UStaticMeshComponent* StaticMesh;
 };

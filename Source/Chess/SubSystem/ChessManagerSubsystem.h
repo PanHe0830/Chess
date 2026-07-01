@@ -20,6 +20,7 @@ namespace AssetConfig
 
 class UDataTable;
 class UDataAsset;
+class AChessBoard;
 
 /**
  * 
@@ -36,8 +37,8 @@ public:
 	AActor* GetChessBoard() {return ChessBoard;} 
 	AActor* GetChessPoint() {return ChessPoint;}
 	
-	bool SpawnChessBoard(FVector& Position , FRotator& Rotation);
-	bool SpawnChessPoint(float Distance);
+	void SpawnChessBoard(FVector& Position , FRotator& Rotation);
+	void SpawnChessPoint(FVector& Position , float Distance);
 	
 private:
 	UPROPERTY()
@@ -46,10 +47,15 @@ private:
 	UPROPERTY()
 	TMap<FName, TObjectPtr<UDataAsset>> AssetConfigMap;
 	
+	UPROPERTY()
+	TObjectPtr<AActor> ChessBoard;
+	
+	UPROPERTY()
+	TObjectPtr<AActor> ChessPoint;
+	
 private:
 	void LoadDataTables();
 	void LoadDataAssets();
-	
-	TObjectPtr<AActor> ChessBoard;
-	TObjectPtr<AActor> ChessPoint;
+	void SpwanChessBoards(TSubclassOf<AActor> BoardClass , FVector& Position , FRotator& Rotation , float Distance);
+	void SpawnChessPoints(TSubclassOf<AActor> PointClass,FVector Position,float Distance);
 };

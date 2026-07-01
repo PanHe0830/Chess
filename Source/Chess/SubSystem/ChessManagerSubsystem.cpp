@@ -4,9 +4,12 @@
 #include "ChessManagerSubsystem.h"
 
 #include "AssetRegistry/AssetRegistryModule.h"
+#include "Chess/Actor/ChessBoard.h"
 #include "Chess/DataAsset/ChessConfig.h"
 #include "Engine/DataTable.h"
 #include "Engine/DataAsset.h"
+#include "Chess/Datatable/ChessPointConfig.h"
+#include "Chess/Actor/ChessPoint.h"
 
 void UChessManagerSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
@@ -22,8 +25,8 @@ void UChessManagerSubsystem::SpawnChessBoardAndPoint()
 	{
 		UE_LOG(LogTemp , Warning, TEXT("No TableConfig or AssetConfigMap or AssetConfigMap."));
 	}
-	SpawnChessBoard();
-	SpawnChessPoint();
+	//SpawnChessBoard();
+	//SpawnChessPoint();
 }
 
 void UChessManagerSubsystem::LoadDataTables()
@@ -80,9 +83,9 @@ void UChessManagerSubsystem::LoadDataAssets()
 	}
 }
 
-bool UChessManagerSubsystem::SpawnChessBoard(FVector& Position , FRotator& Rotation)
+
+void UChessManagerSubsystem::SpawnChessBoard(FVector& Position , FRotator& Rotation , float Distance)
 {
-	AActor* SpawnActor =  nullptr;
 	if (UDataAsset* Table = AssetConfigMap.FindRef(FName("DA_ChessConfig")))
 	{
 		if (UChessConfig* ChessConfig = Cast<UChessConfig>(Table))
@@ -90,15 +93,13 @@ bool UChessManagerSubsystem::SpawnChessBoard(FVector& Position , FRotator& Rotat
 			TSubclassOf<AActor> BoardClass = ChessConfig->ChessBoard;
 			if (BoardClass)
 			{
-				SpawnActor = GetWorld()->SpawnActor<AActor>(BoardClass,Position,Rotation);
+				SpwanChessBoards(BoardClass , Position , Rotation , Distance);
 			}
 		}
 	}
-	
-	return SpawnActor == nullptr;
 }
 
-void UChessManagerSubsystem::SpawnChessPoint(float Distance)
+void UChessManagerSubsystem::SpawnChessPoint(FVector& Position, float Distance)
 {
 	if (UDataAsset* Table = AssetConfigMap.FindRef(FName("DA_ChessConfig")))
 	{
@@ -107,7 +108,72 @@ void UChessManagerSubsystem::SpawnChessPoint(float Distance)
 			TSubclassOf<AActor> PointClass = ChessConfig->ChessPoint;
 			if (PointClass)
 			{
-				
+				SpawnChessPoints(PointClass,Position,Distance);
+			}
+		}
+	}
+}
+
+void UChessManagerSubsystem::SpwanChessBoards(TSubclassOf<AActor> BoardClass , FVector& Position , FRotator& Rotation , float Distance)
+{
+	AActor* SpawnActor =  nullptr;
+	
+	UWorld* World = GetWorld();
+	if (World)
+	{
+		for (int i = 0;i<9;i++)
+		{
+			for (int j = 0;j<10;j++)
+			{
+				FVector NewPosition = FVector(Position.X + i*Distance,Position.Y + j*Distance,Position.Z);
+				SpawnActor = World->SpawnActor<AActor>(BoardClass,NewPosition,Rotation);
+				if (SpawnActor)
+				{
+					AChessBoard* ChessBoard = Cast<AChessBoard>(SpawnActor);
+					if (ChessBoard)
+					{
+						ChessBoard->SetBoardPoint(FVector2D(i,j));
+						
+					}
+				}
+			}
+		}
+		
+	}
+	
+}
+
+void UChessManagerSubsystem::SpawnChessPoints(TSubclassOf<AActor> PointClass,FVector Position , float Distance)
+{
+	if (!PointClass) return;
+	FVector NewPosition = Position;
+	UWorld* World = GetWorld();
+	if (!World) return;
+	AActor* SpawnActor =  nullptr;
+	
+	if (UDataTable* Table = TableConfigMap.FindRef(FName("DT_ChessPointConfig")))
+	{
+		TArray<FChessPointConfig*> AssetList;
+		Table->GetAllRows<FChessPointConfig>(TEXT("DT_ChessPointConfig"),AssetList);
+		if (AssetList.Num() <= 0) return;
+		for (const FChessPointConfig* ChessPointConfig : AssetList)
+		{
+			UStaticMesh* Mesh = ChessPointConfig->ChessMesh.LoadSynchronous();
+			if (!Mesh) return;
+			
+			FActorSpawnParameters SpawnParams;
+			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+    
+			AChessPoint* ChessActor = World->SpawnActor<AChessPoint>(
+				AChessPoint::StaticClass(),
+				NewPosition,
+				FRotator(),
+				SpawnParams
+			);
+    
+			if (ChessActor)
+			{
+				ChessActor->SetMesh(Mesh);
 			}
 		}
 	}
