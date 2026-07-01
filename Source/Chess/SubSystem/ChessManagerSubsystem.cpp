@@ -10,23 +10,13 @@
 #include "Engine/DataAsset.h"
 #include "Chess/Datatable/ChessPointConfig.h"
 #include "Chess/Actor/ChessPoint.h"
-
+PRAGMA_DISABLE_OPTIMIZATION
 void UChessManagerSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
 	
 	LoadDataTables();
 	LoadDataAssets();
-}
-
-void UChessManagerSubsystem::SpawnChessBoardAndPoint()
-{
-	if (TableConfigMap.IsEmpty() || AssetConfigMap.IsEmpty())
-	{
-		UE_LOG(LogTemp , Warning, TEXT("No TableConfig or AssetConfigMap or AssetConfigMap."));
-	}
-	//SpawnChessBoard();
-	//SpawnChessPoint();
 }
 
 void UChessManagerSubsystem::LoadDataTables()
@@ -133,14 +123,12 @@ void UChessManagerSubsystem::SpwanChessBoards(TSubclassOf<AActor> BoardClass , F
 					if (ChessBoard)
 					{
 						ChessBoard->SetBoardPoint(FVector2D(i,j));
-						
+						DrawDebugSphere(World,ChessBoard->GetActorLocation(),16,16,FColor::Green);
 					}
 				}
 			}
 		}
-		
 	}
-	
 }
 
 void UChessManagerSubsystem::SpawnChessPoints(TSubclassOf<AActor> PointClass,FVector Position , float Distance)
@@ -178,3 +166,4 @@ void UChessManagerSubsystem::SpawnChessPoints(TSubclassOf<AActor> PointClass,FVe
 		}
 	}
 }
+PRAGMA_ENABLE_OPTIMIZATION
