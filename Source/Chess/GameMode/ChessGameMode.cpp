@@ -15,6 +15,6 @@ void AChessGameMode::BeginPlay()
 		FVector Position = FVector::ZeroVector;
 		FRotator Rotation = FRotator::ZeroRotator;
 		ChessManager->SpawnChessBoard(Position,Rotation,100);
-		ChessManager->SpawnChessPoint(Position,100);
+		//ChessManager->SpawnChessPoint(Position,100);
 	}
 }

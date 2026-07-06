@@ -54,8 +54,9 @@ void UChessManagerSubsystem::LoadDataAssets()
 
 	FARFilter Filter;
 	Filter.PackagePaths.Add(AssetConfig::AssetPath);   // 指定目录
-	Filter.ClassPaths.Add(UDataAsset::StaticClass()->GetClassPathName());
+	Filter.ClassPaths.Add(UPrimaryDataAsset::StaticClass()->GetClassPathName());
 	Filter.bRecursivePaths = true;
+	Filter.bRecursiveClasses = true;
 
 	TArray<FAssetData> AssetList;
 	AssetRegistryModule.Get().GetAssets(Filter, AssetList);
@@ -123,7 +124,7 @@ void UChessManagerSubsystem::SpwanChessBoards(TSubclassOf<AActor> BoardClass , F
 					if (ChessBoard)
 					{
 						ChessBoard->SetBoardPoint(FVector2D(i,j));
-						DrawDebugSphere(World,ChessBoard->GetActorLocation(),16,16,FColor::Green);
+						DrawDebugSphere(World,ChessBoard->GetActorLocation(),16,16,FColor::Green,true,-1.0f);
 					}
 				}
 			}
