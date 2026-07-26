@@ -6,6 +6,9 @@
 #include "GameFramework/PlayerController.h"
 #include "ChessPlayerController.generated.h"
 
+class UInputMappingContext;
+class UInputAction;
+
 /**
  * 
  */
@@ -17,4 +20,14 @@ protected:
 	virtual void BeginPlay() override;
 	
 	virtual void SetupInputComponent() override;
+
+private:
+	UFUNCTION()
+	void MouseLeftButtonClicked(const FInputActionValue& Value);
+	
+public:
+	UPROPERTY(EditAnywhere , BlueprintReadWrite , Category = "Input")
+	TObjectPtr<UInputMappingContext> InputMappingContext;
+	UPROPERTY(EditAnywhere , BlueprintReadWrite , Category = "Input")
+	TObjectPtr<UInputAction> MouseDown;
 };
