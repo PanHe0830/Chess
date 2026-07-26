@@ -10,13 +10,31 @@
 #include "Engine/DataAsset.h"
 #include "Chess/Datatable/ChessPointConfig.h"
 #include "Chess/Actor/ChessPoint.h"
-PRAGMA_DISABLE_OPTIMIZATION
+
 void UChessManagerSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
 	
+	ChessBoardActors.Empty();
+	
+	ShowBoardCommand = MakeUnique<FAutoConsoleCommand>(
+		TEXT("Chess.ShowBoard"),
+		TEXT("Draw Chess Board"),
+		FConsoleCommandDelegate::CreateUObject(
+			this,
+			&UChessManagerSubsystem::ShowBoardDebug
+		)
+	);
+	
 	LoadDataTables();
 	LoadDataAssets();
+}
+
+void UChessManagerSubsystem::Deinitialize()
+{
+	ShowBoardCommand.Reset();
+	
+	Super::Deinitialize();
 }
 
 void UChessManagerSubsystem::LoadDataTables()
@@ -124,6 +142,7 @@ void UChessManagerSubsystem::SpwanChessBoards(TSubclassOf<AActor> BoardClass , F
 					if (ChessBoard)
 					{
 						ChessBoard->SetBoardPoint(FVector2D(i,j));
+						ChessBoardActors.Add(ChessBoard);
 						DrawDebugSphere(World,ChessBoard->GetActorLocation(),16,16,FColor::Green,true,-1.0f);
 					}
 				}
@@ -152,7 +171,7 @@ void UChessManagerSubsystem::SpawnChessPoints(TSubclassOf<AActor> PointClass,FVe
 			
 			FActorSpawnParameters SpawnParams;
 			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-    
+			NewPosition += FVector(Distance,Distance,0);
 			AChessPoint* ChessActor = World->SpawnActor<AChessPoint>(
 				AChessPoint::StaticClass(),
 				NewPosition,
@@ -167,4 +186,15 @@ void UChessManagerSubsystem::SpawnChessPoints(TSubclassOf<AActor> PointClass,FVe
 		}
 	}
 }
-PRAGMA_ENABLE_OPTIMIZATION
+
+void UChessManagerSubsystem::ShowBoardDebug()
+{
+	UWorld* World = GetWorld();
+	if (World)
+	{
+		for (auto& ChessBoard : ChessBoardActors)
+		{
+			DrawDebugSphere(World,ChessBoard->GetActorLocation(),16,16,FColor::Green,true,-1.0f);
+		}
+	}
+}

@@ -31,9 +31,7 @@ class CHESS_API UChessManagerSubsystem : public UGameInstanceSubsystem
 	GENERATED_BODY()
 public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
-	
-	AActor* GetChessBoard() {return ChessBoardActor;} 
-	AActor* GetChessPoint() {return ChessPointActor;}
+	virtual void Deinitialize() override;
 	
 	void SpawnChessBoard(FVector& Position , FRotator& Rotation , float Distance);
 	void SpawnChessPoint(FVector& Position , float Distance);
@@ -46,14 +44,15 @@ private:
 	TMap<FName, TObjectPtr<UDataAsset>> AssetConfigMap;
 	
 	UPROPERTY()
-	TObjectPtr<AActor> ChessBoardActor;
-	
-	UPROPERTY()
-	TObjectPtr<AActor> ChessPointActor;
+	TArray<AActor*> ChessBoardActors;
 	
 private:
 	void LoadDataTables();
 	void LoadDataAssets();
 	void SpwanChessBoards(TSubclassOf<AActor> BoardClass , FVector& Position , FRotator& Rotation , float Distance);
 	void SpawnChessPoints(TSubclassOf<AActor> PointClass,FVector Position,float Distance);
+	
+private:
+	TUniquePtr<FAutoConsoleCommand> ShowBoardCommand;
+	void ShowBoardDebug();
 };

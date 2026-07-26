@@ -25,4 +25,8 @@ struct FChessPointConfig : public FTableRowBase
 	// 棋子网格体
 	UPROPERTY(EditAnywhere, Category = Chess)
 	TSoftObjectPtr<UStaticMesh> ChessMesh;
+	
+	// 棋子蓝图
+	UPROPERTY(EditAnywhere, Category = Chess)
+	TSubclassOf<AActor> ChessActor;
 };

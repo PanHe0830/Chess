@@ -3,11 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AbilitySystemInterface.h"
 #include "GameFramework/Actor.h"
 #include "ChessPoint.generated.h"
 
+class UAbilitySystemComponent;
+class UChessAttributeSet;
+
 UCLASS()
-class CHESS_API AChessPoint : public AActor
+class CHESS_API AChessPoint : public AActor , public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 	
@@ -24,4 +28,15 @@ protected:
 private:
 	UPROPERTY(EditAnywhere, Category = ChessPoint)
 	UStaticMeshComponent* StaticMesh;
+	
+	// ====================================GAS====================================
+public:
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+	
+	UPROPERTY(EditAnywhere, Category = ChessPoint)
+	UAbilitySystemComponent* GameAbilitySystemComponent;
+	
+	UPROPERTY(EditAnywhere, Category = ChessPoint)
+	UChessAttributeSet* AttributeSet;
+	// ====================================GAS====================================
 };
