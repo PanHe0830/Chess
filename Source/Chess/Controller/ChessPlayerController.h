@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "ChessPlayerController.generated.h"
 
+struct FInputActionValue;
 class UInputMappingContext;
 class UInputAction;
 

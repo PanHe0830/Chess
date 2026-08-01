@@ -7,6 +7,7 @@
 #include "GameFramework/Actor.h"
 #include "ChessPoint.generated.h"
 
+class UGameplayAbility;
 class UAbilitySystemComponent;
 class UChessAttributeSet;
 
@@ -38,5 +39,8 @@ public:
 	
 	UPROPERTY(EditAnywhere, Category = ChessPoint)
 	UChessAttributeSet* AttributeSet;
+	
+	UPROPERTY(EditAnywhere, Category = ChessPoint)
+	TSubclassOf<UGameplayAbility> MoveAbility;
 	// ====================================GAS====================================
 };
