@@ -3,9 +3,12 @@
 
 #include "ChessPlayerController.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
+#include "Abilities/GameplayAbilityTargetTypes.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
+#include "Chess/ChessGamePlayTag.h"
 #include "Chess/Actor/ChessPoint.h"
 #include "Chess/SubSystem/ChessManagerSubsystem.h"
 
@@ -49,10 +52,6 @@ void AChessPlayerController::MouseLeftButtonClicked(const FInputActionValue& Val
 	
 	if (!bHit)
 	{
-		//if (UChessManagerSubsystem* ChessManager = GetGameInstance()->GetSubsystem<UChessManagerSubsystem>())
-		//{
-		//	ChessManager->SetCurrentSelectedActor(nullptr);
-		//}
 		return;
 	}
 	
@@ -66,10 +65,44 @@ void AChessPlayerController::MouseLeftButtonClicked(const FInputActionValue& Val
 	}
 	else
 	{
-		if (UChessManagerSubsystem* ChessManager = GetGameInstance()->GetSubsystem<UChessManagerSubsystem>())
+		UChessManagerSubsystem* ChessManager = GetGameInstance()->GetSubsystem<UChessManagerSubsystem>();
+		AChessPoint* ChessPoint = ChessManager
+			? Cast<AChessPoint>(ChessManager->GetCurrentSelectedActor())
+			: nullptr;
+		if (!ChessPoint)
 		{
-			ChessManager->SetCurrentSelectedActor(nullptr);
+			return;
 		}
+
+		// 先取消选中，把抬起的 Z 降回去，再用逻辑高度作为落点 Z
+		const FVector CurrentLocation = ChessPoint->GetActorLocation();
+		ChessManager->SetCurrentSelectedActor(nullptr);
+		const FVector LogicalLocation = ChessPoint->GetActorLocation();
+
+		const FVector TargetLocation(
+			Hit.ImpactPoint.X,
+			Hit.ImpactPoint.Y,
+			LogicalLocation.Z);
+
+		FGameplayEventData EventData;
+		EventData.EventTag = ChessGameplayTags::Chess_Move;
+		EventData.Instigator = this;
+		EventData.Target = ChessPoint;
+
+		FGameplayAbilityTargetData_LocationInfo* LocData = new FGameplayAbilityTargetData_LocationInfo();
+		LocData->TargetLocation.LocationType = EGameplayAbilityTargetingLocationType::LiteralTransform;
+		LocData->TargetLocation.LiteralTransform = FTransform(TargetLocation);
+		EventData.TargetData = FGameplayAbilityTargetDataHandle(LocData);
+
+		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
+			ChessPoint,
+			ChessGameplayTags::Chess_Move,
+			EventData);
+
+		UE_LOG(LogTemp, Warning, TEXT("Request move %s to %s (from %s)"),
+			*ChessPoint->GetName(),
+			*TargetLocation.ToCompactString(),
+			*CurrentLocation.ToCompactString());
 	}
 }
 

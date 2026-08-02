@@ -2,9 +2,7 @@
 
 
 #include "ChessPoint.h"
-#include "Chess/ChessGamePlayTag.h"
 
-#include "AbilitySystemBlueprintLibrary.h"
 #include "Components/StaticMeshComponent.h"
 #include "AbilitySystemComponent.h"
 #include "Chess/GAS/ChessAttributeSet.h"
@@ -34,13 +32,17 @@ void AChessPoint::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	GameAbilitySystemComponent->InitAbilityActorInfo(this,this);
-	const FGameplayAbilitySpec MoveSpec = GameAbilitySystemComponent->BuildAbilitySpecFromClass(MoveAbility,0,-1);
-	const FGameplayAbilitySpecHandle Handle = GameAbilitySystemComponent->GiveAbility(MoveSpec);
-	GameAbilitySystemComponent->TryActivateAbility(Handle);
-	//const FGameplayAbilitySpecHandle Handle = GameAbilitySystemComponent->GiveAbility(MoveSpec);
-	//GameAbilitySystemComponent->TryActivateAbility(Handle);
-	//UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(this,ChessGameplayTags::Chess_Move,FGameplayEventData());
+	GameAbilitySystemComponent->InitAbilityActorInfo(this, this);
+
+	if (!MoveAbility)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("%s MoveAbility is not set."), *GetName());
+		return;
+	}
+
+	// 只授予能力，等待 GameplayEvent 触发激活
+	const FGameplayAbilitySpec MoveSpec = GameAbilitySystemComponent->BuildAbilitySpecFromClass(MoveAbility, 1, -1);
+	GameAbilitySystemComponent->GiveAbility(MoveSpec);
 }
 
 UAbilitySystemComponent* AChessPoint::GetAbilitySystemComponent() const

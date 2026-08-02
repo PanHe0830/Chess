@@ -3,7 +3,9 @@
 
 #include "ChessMoveAbility.h"
 
+#include "Abilities/GameplayAbilityTargetTypes.h"
 #include "Chess/ChessGamePlayTag.h"
+#include "GameFramework/Actor.h"
 
 UChessMoveAbility::UChessMoveAbility()
 {
@@ -29,7 +31,28 @@ void UChessMoveAbility::ActivateAbility(
 	const FGameplayEventData* TriggerEventData
 	)
 {
-	UE_LOG(LogTemp , Warning , TEXT("UChessMoveAbility::ActivateAbility"));
+	if (!CommitAbility(Handle, ActorInfo, ActivationInfo))
+	{
+		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
+		return;
+	}
+
+	AActor* Avatar = GetAvatarActorFromActorInfo();
+	if (!Avatar || !TriggerEventData || !TriggerEventData->TargetData.IsValid(0))
+	{
+		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
+		return;
+	}
+
+	const FGameplayAbilityTargetData* TargetData = TriggerEventData->TargetData.Get(0);
+	const FVector TargetLocation = TargetData->GetEndPoint();
+
+	Avatar->SetActorLocation(TargetLocation);
+
+	UE_LOG(LogTemp, Warning, TEXT("UChessMoveAbility::ActivateAbility move to %s"),
+		*TargetLocation.ToCompactString());
+
+	EndAbility(Handle, ActorInfo, ActivationInfo, true, false);
 }
 
 void UChessMoveAbility::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
