@@ -55,4 +55,10 @@ private:
 private:
 	TUniquePtr<FAutoConsoleCommand> ShowBoardCommand;
 	void ShowBoardDebug();
+public:
+	void SetCurrentSelectedActor(AActor* Actor);
+	AActor* GetCurrentSelectedActor() const;
+private:
+	UPROPERTY()
+	TObjectPtr<AActor> CurrentSelectedActor;
 };

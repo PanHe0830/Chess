@@ -28,6 +28,8 @@ void UChessManagerSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	
 	LoadDataTables();
 	LoadDataAssets();
+	
+	CurrentSelectedActor = nullptr;
 }
 
 void UChessManagerSubsystem::Deinitialize()
@@ -197,4 +199,35 @@ void UChessManagerSubsystem::ShowBoardDebug()
 			DrawDebugSphere(World,ChessBoard->GetActorLocation(),16,16,FColor::Green,true,-1.0f);
 		}
 	}
+}
+
+void UChessManagerSubsystem::SetCurrentSelectedActor(AActor* Actor)
+{
+	if (CurrentSelectedActor == Actor)
+	{
+		return;
+	}
+
+	constexpr float SelectedOffsetZ = 100.f;
+
+	// 降下旧选中
+	if (CurrentSelectedActor)
+	{
+		const FVector OldLocation = CurrentSelectedActor->GetActorLocation();
+		CurrentSelectedActor->SetActorLocation(FVector(OldLocation.X, OldLocation.Y, OldLocation.Z - SelectedOffsetZ));
+	}
+
+	// 抬起新选中
+	if (Actor)
+	{
+		const FVector NewLocation = Actor->GetActorLocation();
+		Actor->SetActorLocation(FVector(NewLocation.X, NewLocation.Y, NewLocation.Z + SelectedOffsetZ));
+	}
+
+	CurrentSelectedActor = Actor;
+}
+
+AActor* UChessManagerSubsystem::GetCurrentSelectedActor() const
+{
+	return CurrentSelectedActor;
 }

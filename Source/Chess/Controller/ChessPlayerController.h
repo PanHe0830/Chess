@@ -25,10 +25,14 @@ protected:
 private:
 	UFUNCTION()
 	void MouseLeftButtonClicked(const FInputActionValue& Value);
+	UFUNCTION()
+	void MouseRightButtonClicked(const FInputActionValue& Value);
 	
 public:
 	UPROPERTY(EditAnywhere , BlueprintReadWrite , Category = "Input")
 	TObjectPtr<UInputMappingContext> InputMappingContext;
 	UPROPERTY(EditAnywhere , BlueprintReadWrite , Category = "Input")
-	TObjectPtr<UInputAction> MouseDown;
+	TObjectPtr<UInputAction> MouseLeftDown;
+	UPROPERTY(EditAnywhere , BlueprintReadWrite , Category = "Input")
+	TObjectPtr<UInputAction> MouseRightDown;
 };
