@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystemInterface.h"
+#include "Chess/Chess.h"
 #include "GameFramework/Actor.h"
 #include "ChessPoint.generated.h"
 
@@ -29,6 +30,12 @@ protected:
 private:
 	UPROPERTY(EditAnywhere, Category = ChessPoint)
 	UStaticMeshComponent* StaticMesh;
+	
+	UPROPERTY(EditAnywhere, Category = ChessPoint)
+	EChessType ChessType = EChessType::ECT_MAX;
+	
+	UPROPERTY(EditAnywhere, Category = ChessPoint)
+	EChessCamp ChessCamp = EChessCamp::ECT_MAX;
 	
 	// ====================================GAS====================================
 public:

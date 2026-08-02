@@ -66,9 +66,7 @@ void AChessPlayerController::MouseLeftButtonClicked(const FInputActionValue& Val
 	else
 	{
 		UChessManagerSubsystem* ChessManager = GetGameInstance()->GetSubsystem<UChessManagerSubsystem>();
-		AChessPoint* ChessPoint = ChessManager
-			? Cast<AChessPoint>(ChessManager->GetCurrentSelectedActor())
-			: nullptr;
+		AChessPoint* ChessPoint = ChessManager ? Cast<AChessPoint>(ChessManager->GetCurrentSelectedActor()): nullptr;
 		if (!ChessPoint)
 		{
 			return;
