@@ -35,4 +35,7 @@ public:
 	TObjectPtr<UInputAction> MouseLeftDown;
 	UPROPERTY(EditAnywhere , BlueprintReadWrite , Category = "Input")
 	TObjectPtr<UInputAction> MouseRightDown;
+	
+	UFUNCTION(Server, Reliable)
+	void ServerRequestChessMove(class AChessPoint* Piece, FVector_NetQuantize TargetLocation);
 };

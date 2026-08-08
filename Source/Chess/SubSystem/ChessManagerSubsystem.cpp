@@ -17,15 +17,6 @@ void UChessManagerSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	
 	ChessBoardActors.Empty();
 	
-	ShowBoardCommand = MakeUnique<FAutoConsoleCommand>(
-		TEXT("Chess.ShowBoard"),
-		TEXT("Draw Chess Board"),
-		FConsoleCommandDelegate::CreateUObject(
-			this,
-			&UChessManagerSubsystem::ShowBoardDebug
-		)
-	);
-	
 	LoadDataTables();
 	LoadDataAssets();
 	
@@ -34,7 +25,6 @@ void UChessManagerSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 
 void UChessManagerSubsystem::Deinitialize()
 {
-	ShowBoardCommand.Reset();
 	
 	Super::Deinitialize();
 }
@@ -185,18 +175,6 @@ void UChessManagerSubsystem::SpawnChessPoints(TSubclassOf<AActor> PointClass,FVe
 			{
 				ChessActor->SetMesh(Mesh);
 			}
-		}
-	}
-}
-
-void UChessManagerSubsystem::ShowBoardDebug()
-{
-	UWorld* World = GetWorld();
-	if (World)
-	{
-		for (auto& ChessBoard : ChessBoardActors)
-		{
-			DrawDebugSphere(World,ChessBoard->GetActorLocation(),16,16,FColor::Green,true,-1.0f);
 		}
 	}
 }

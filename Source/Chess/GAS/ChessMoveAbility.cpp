@@ -9,14 +9,14 @@
 
 UChessMoveAbility::UChessMoveAbility()
 {
-	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateNo;
+	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateYes;
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
-	NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::LocalPredicted;
-	NetSecurityPolicy = EGameplayAbilityNetSecurityPolicy::ClientOrServer;
+	NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::ServerOnly;
+	NetSecurityPolicy = EGameplayAbilityNetSecurityPolicy::ServerOnly;
 	
 	bServerRespectsRemoteAbilityCancellation = true;
 	bRetriggerInstancedAbility = false;
-	bReplicateInputDirectly = false;
+	bReplicateInputDirectly = true;
 	
 	FAbilityTriggerData Trigger;
 	Trigger.TriggerTag = ChessGameplayTags::Chess_Move;

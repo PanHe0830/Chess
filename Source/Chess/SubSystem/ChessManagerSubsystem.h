@@ -51,10 +51,6 @@ private:
 	void LoadDataAssets();
 	void SpwanChessBoards(TSubclassOf<AActor> BoardClass , FVector& Position , FRotator& Rotation , float Distance);
 	void SpawnChessPoints(TSubclassOf<AActor> PointClass,FVector Position,float Distance);
-	
-private:
-	TUniquePtr<FAutoConsoleCommand> ShowBoardCommand;
-	void ShowBoardDebug();
 public:
 	void SetCurrentSelectedActor(AActor* Actor);
 	AActor* GetCurrentSelectedActor() const;

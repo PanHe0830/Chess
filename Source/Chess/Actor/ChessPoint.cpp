@@ -12,6 +12,9 @@ AChessPoint::AChessPoint()
 	PrimaryActorTick.bCanEverTick = true;
 	
 	GameAbilitySystemComponent = CreateDefaultSubobject<UAbilitySystemComponent>(FName("GameAbilitySystemComponent"));
+	bReplicates = true;
+	SetReplicatingMovement(true);
+	GameAbilitySystemComponent->SetIsReplicated(true);
 	
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(FName("StaticMesh"));
 	AttributeSet = CreateDefaultSubobject<UChessAttributeSet>(FName("AttributeSet"));
@@ -40,6 +43,12 @@ void AChessPoint::BeginPlay()
 		return;
 	}
 
+	if (!HasAuthority())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("%s Clients not Authority ."), *GetName());
+		return;
+	}
+	
 	// 只授予能力，等待 GameplayEvent 触发激活
 	const FGameplayAbilitySpec MoveSpec = GameAbilitySystemComponent->BuildAbilitySpecFromClass(MoveAbility, 1, -1);
 	GameAbilitySystemComponent->GiveAbility(MoveSpec);

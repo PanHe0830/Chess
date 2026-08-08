@@ -82,25 +82,7 @@ void AChessPlayerController::MouseLeftButtonClicked(const FInputActionValue& Val
 			Hit.ImpactPoint.Y,
 			LogicalLocation.Z);
 
-		FGameplayEventData EventData;
-		EventData.EventTag = ChessGameplayTags::Chess_Move;
-		EventData.Instigator = this;
-		EventData.Target = ChessPoint;
-
-		FGameplayAbilityTargetData_LocationInfo* LocData = new FGameplayAbilityTargetData_LocationInfo();
-		LocData->TargetLocation.LocationType = EGameplayAbilityTargetingLocationType::LiteralTransform;
-		LocData->TargetLocation.LiteralTransform = FTransform(TargetLocation);
-		EventData.TargetData = FGameplayAbilityTargetDataHandle(LocData);
-
-		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
-			ChessPoint,
-			ChessGameplayTags::Chess_Move,
-			EventData);
-
-		UE_LOG(LogTemp, Warning, TEXT("Request move %s to %s (from %s)"),
-			*ChessPoint->GetName(),
-			*TargetLocation.ToCompactString(),
-			*CurrentLocation.ToCompactString());
+		ServerRequestChessMove(ChessPoint, TargetLocation);
 	}
 }
 
@@ -111,4 +93,27 @@ void AChessPlayerController::MouseRightButtonClicked(const FInputActionValue& Va
 	{
 		ChessManager->SetCurrentSelectedActor(nullptr);
 	}
+}
+
+void AChessPlayerController::ServerRequestChessMove_Implementation(class AChessPoint* Piece, FVector_NetQuantize TargetLocation)
+{
+	FGameplayEventData EventData;
+	EventData.EventTag = ChessGameplayTags::Chess_Move;
+	EventData.Instigator = this;
+	EventData.Target = Piece;
+
+	FGameplayAbilityTargetData_LocationInfo* LocData = new FGameplayAbilityTargetData_LocationInfo();
+	LocData->TargetLocation.LocationType = EGameplayAbilityTargetingLocationType::LiteralTransform;
+	LocData->TargetLocation.LiteralTransform = FTransform(TargetLocation);
+	EventData.TargetData = FGameplayAbilityTargetDataHandle(LocData);
+
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
+		Piece,
+		ChessGameplayTags::Chess_Move,
+		EventData);
+
+	UE_LOG(LogTemp, Warning, TEXT("Request move %s to %s (from %s)"),
+		*Piece->GetName(),
+		*TargetLocation.ToCompactString(),
+		*TargetLocation.ToCompactString());
 }
