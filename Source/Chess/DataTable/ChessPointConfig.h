@@ -22,11 +22,11 @@ struct FChessPointConfig : public FTableRowBase
 	UPROPERTY(EditAnywhere, Category = Chess)
 	EChessCamp ChessCamp;
 	
-	// 棋子网格体
-	UPROPERTY(EditAnywhere, Category = Chess)
-	TSoftObjectPtr<UStaticMesh> ChessMesh;
-	
 	// 棋子蓝图
 	UPROPERTY(EditAnywhere, Category = Chess)
 	TSubclassOf<AActor> ChessActor;
+	
+	// 棋子在棋盘上的位置
+	UPROPERTY(EditAnywhere, Category = Chess)
+	FVector2D ChessLocation;
 };

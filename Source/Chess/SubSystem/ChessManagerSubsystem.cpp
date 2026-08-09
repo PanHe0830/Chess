@@ -158,9 +158,6 @@ void UChessManagerSubsystem::SpawnChessPoints(TSubclassOf<AActor> PointClass,FVe
 		if (AssetList.Num() <= 0) return;
 		for (const FChessPointConfig* ChessPointConfig : AssetList)
 		{
-			UStaticMesh* Mesh = ChessPointConfig->ChessMesh.LoadSynchronous();
-			if (!Mesh) return;
-			
 			FActorSpawnParameters SpawnParams;
 			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 			NewPosition += FVector(Distance,Distance,0);
@@ -170,11 +167,6 @@ void UChessManagerSubsystem::SpawnChessPoints(TSubclassOf<AActor> PointClass,FVe
 				FRotator(),
 				SpawnParams
 			);
-    
-			if (ChessActor)
-			{
-				ChessActor->SetMesh(Mesh);
-			}
 		}
 	}
 }

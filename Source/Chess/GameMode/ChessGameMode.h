@@ -15,4 +15,7 @@ class CHESS_API AChessGameMode : public AGameMode
 	GENERATED_BODY()
 protected:
 	virtual void BeginPlay() override;
+	
+private:
+	void SpawnChessBoard();
 };

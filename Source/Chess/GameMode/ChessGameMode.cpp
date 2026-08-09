@@ -9,9 +9,14 @@ void AChessGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	UChessManagerSubsystem* ChessManager = GetGameInstance()->GetSubsystem<UChessManagerSubsystem>();
-	if (ChessManager)
-	{
-		
-	}
+	//UChessManagerSubsystem* ChessManager = GetGameInstance()->GetSubsystem<UChessManagerSubsystem>();
+	//if (ChessManager)
+	//{
+	//	
+	//}
+}
+
+void AChessGameMode::SpawnChessBoard()
+{
+	
 }
