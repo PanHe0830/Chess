@@ -11,6 +11,7 @@ void AChessGameMode::BeginPlay()
 	Super::BeginPlay();
 	
 	SpawnChessBoard();
+	SetChessPoint();
 }
 
 void AChessGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -70,4 +71,9 @@ void AChessGameMode::SpawnChessBoard()
 			}
 		}
 	}
+}
+
+void AChessGameMode::SetChessPoint()
+{
+	
 }

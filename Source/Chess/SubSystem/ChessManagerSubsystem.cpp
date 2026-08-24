@@ -15,12 +15,8 @@ void UChessManagerSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
 	
-	ChessBoardActors.Empty();
-	
 	LoadDataTables();
 	LoadDataAssets();
-	
-	CurrentSelectedActor = nullptr;
 }
 
 void UChessManagerSubsystem::Deinitialize()
@@ -82,122 +78,4 @@ void UChessManagerSubsystem::LoadDataAssets()
 			UE_LOG(LogTemp, Log,TEXT("Load DataTable : %s"),*DataAsset->GetName());
 		}
 	}
-}
-
-
-void UChessManagerSubsystem::SpawnChessBoard(FVector& Position , FRotator& Rotation , float Distance)
-{
-	if (UDataAsset* Table = AssetConfigMap.FindRef(FName("DA_ChessConfig")))
-	{
-		if (UChessConfig* ChessConfig = Cast<UChessConfig>(Table))
-		{
-			TSubclassOf<AActor> BoardClass = ChessConfig->ChessBoard;
-			if (BoardClass)
-			{
-				SpwanChessBoards(BoardClass , Position , Rotation , Distance);
-			}
-		}
-	}
-}
-
-void UChessManagerSubsystem::SpawnChessPoint(FVector& Position, float Distance)
-{
-	if (UDataAsset* Table = AssetConfigMap.FindRef(FName("DA_ChessConfig")))
-	{
-		if (UChessConfig* ChessConfig = Cast<UChessConfig>(Table))
-		{
-			TSubclassOf<AActor> PointClass = ChessConfig->ChessPoint;
-			if (PointClass)
-			{
-				SpawnChessPoints(PointClass,Position,Distance);
-			}
-		}
-	}
-}
-
-void UChessManagerSubsystem::SpwanChessBoards(TSubclassOf<AActor> BoardClass , FVector& Position , FRotator& Rotation , float Distance)
-{
-	AActor* SpawnActor =  nullptr;
-	
-	UWorld* World = GetWorld();
-	if (World)
-	{
-		for (int i = 0;i<9;i++)
-		{
-			for (int j = 0;j<10;j++)
-			{
-				FVector NewPosition = FVector(Position.X + i*Distance,Position.Y + j*Distance,Position.Z);
-				SpawnActor = World->SpawnActor<AActor>(BoardClass,NewPosition,Rotation);
-				if (SpawnActor)
-				{
-					AChessBoard* ChessBoard = Cast<AChessBoard>(SpawnActor);
-					if (ChessBoard)
-					{
-						ChessBoard->SetBoardPoint(FVector2D(i,j));
-						ChessBoardActors.Add(ChessBoard);
-						DrawDebugSphere(World,ChessBoard->GetActorLocation(),16,16,FColor::Green,true,-1.0f);
-					}
-				}
-			}
-		}
-	}
-}
-
-void UChessManagerSubsystem::SpawnChessPoints(TSubclassOf<AActor> PointClass,FVector Position , float Distance)
-{
-	if (!PointClass) return;
-	FVector NewPosition = Position;
-	UWorld* World = GetWorld();
-	if (!World) return;
-	AActor* SpawnActor =  nullptr;
-	
-	if (UDataTable* Table = TableConfigMap.FindRef(FName("DT_ChessPointConfig")))
-	{
-		TArray<FChessPointConfig*> AssetList;
-		Table->GetAllRows<FChessPointConfig>(TEXT("DT_ChessPointConfig"),AssetList);
-		if (AssetList.Num() <= 0) return;
-		for (const FChessPointConfig* ChessPointConfig : AssetList)
-		{
-			FActorSpawnParameters SpawnParams;
-			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-			NewPosition += FVector(Distance,Distance,0);
-			AChessPoint* ChessActor = World->SpawnActor<AChessPoint>(
-				AChessPoint::StaticClass(),
-				NewPosition,
-				FRotator(),
-				SpawnParams
-			);
-		}
-	}
-}
-
-void UChessManagerSubsystem::SetCurrentSelectedActor(AActor* Actor)
-{
-	if (CurrentSelectedActor == Actor)
-	{
-		return;
-	}
-
-	constexpr float SelectedOffsetZ = 100.f;
-
-	// 降下旧选中
-	if (CurrentSelectedActor)
-	{
-		const FVector OldLocation = CurrentSelectedActor->GetActorLocation();
-		CurrentSelectedActor->SetActorLocation(FVector(OldLocation.X, OldLocation.Y, OldLocation.Z - SelectedOffsetZ));
-	}
-
-	// 抬起新选中
-	if (Actor)
-	{
-		const FVector NewLocation = Actor->GetActorLocation();
-		Actor->SetActorLocation(FVector(NewLocation.X, NewLocation.Y, NewLocation.Z + SelectedOffsetZ));
-	}
-
-	CurrentSelectedActor = Actor;
-}
-
-AActor* UChessManagerSubsystem::GetCurrentSelectedActor() const
-{
-	return CurrentSelectedActor;
 }

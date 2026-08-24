@@ -19,6 +19,7 @@ protected:
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 private:
 	void SpawnChessBoard();
+	void SetChessPoint();
 	
 public:
 	UPROPERTY(EditAnywhere , Category = "Chess")

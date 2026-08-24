@@ -33,9 +33,6 @@ public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;
 	
-	void SpawnChessBoard(FVector& Position , FRotator& Rotation , float Distance);
-	void SpawnChessPoint(FVector& Position , float Distance);
-	
 private:
 	UPROPERTY()
 	TMap<FName, TObjectPtr<UDataTable>> TableConfigMap;
@@ -43,18 +40,6 @@ private:
 	UPROPERTY()
 	TMap<FName, TObjectPtr<UDataAsset>> AssetConfigMap;
 	
-	UPROPERTY()
-	TArray<AActor*> ChessBoardActors;
-	
-private:
 	void LoadDataTables();
 	void LoadDataAssets();
-	void SpwanChessBoards(TSubclassOf<AActor> BoardClass , FVector& Position , FRotator& Rotation , float Distance);
-	void SpawnChessPoints(TSubclassOf<AActor> PointClass,FVector Position,float Distance);
-public:
-	void SetCurrentSelectedActor(AActor* Actor);
-	AActor* GetCurrentSelectedActor() const;
-private:
-	UPROPERTY()
-	TObjectPtr<AActor> CurrentSelectedActor;
 };
