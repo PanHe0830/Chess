@@ -23,6 +23,12 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	
 	void SetMesh(UStaticMesh* Mesh);
+
+	void Select();
+	void Deselect();
+	bool IsSelected() const { return bIsSelected; }
+	EChessCamp GetChessCamp() const { return ChessCamp; }
+	FVector GetLogicalLocation() const;
 	
 protected:
 	virtual void BeginPlay() override;
@@ -36,6 +42,11 @@ private:
 	
 	UPROPERTY(EditAnywhere, Category = ChessPoint)
 	EChessCamp ChessCamp = EChessCamp::ECT_MAX;
+
+	UPROPERTY(EditAnywhere, Category = ChessPoint)
+	float SelectHeight = 50.f;
+
+	bool bIsSelected = false;
 	
 	// ====================================GAS====================================
 public:

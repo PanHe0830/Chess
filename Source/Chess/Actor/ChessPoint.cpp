@@ -31,6 +31,38 @@ void AChessPoint::SetMesh(UStaticMesh* Mesh)
 	StaticMesh->SetStaticMesh(Mesh);
 }
 
+void AChessPoint::Select()
+{
+	if (bIsSelected)
+	{
+		return;
+	}
+
+	bIsSelected = true;
+	AddActorWorldOffset(FVector(0.f, 0.f, SelectHeight));
+}
+
+void AChessPoint::Deselect()
+{
+	if (!bIsSelected)
+	{
+		return;
+	}
+
+	bIsSelected = false;
+	AddActorWorldOffset(FVector(0.f, 0.f, -SelectHeight));
+}
+
+FVector AChessPoint::GetLogicalLocation() const
+{
+	FVector Location = GetActorLocation();
+	if (bIsSelected)
+	{
+		Location.Z -= SelectHeight;
+	}
+	return Location;
+}
+
 void AChessPoint::BeginPlay()
 {
 	Super::BeginPlay();

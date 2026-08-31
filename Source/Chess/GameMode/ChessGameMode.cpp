@@ -4,6 +4,9 @@
 #include "ChessGameMode.h"
 
 #include "Chess/Actor/ChessBoard.h"
+#include "Chess/Actor/ChessPoint.h"
+#include "Chess/Datatable/ChessPointConfig.h"
+#include "Chess/SubSystem/ChessManagerSubsystem.h"
 
 
 void AChessGameMode::BeginPlay()
@@ -75,5 +78,34 @@ void AChessGameMode::SpawnChessBoard()
 
 void AChessGameMode::SetChessPoint()
 {
+	UWorld* World = GetWorld();
 	
+	if (World == nullptr) return;
+	
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	
+	if (UChessManagerSubsystem* ChessManager = GetGameInstance()->GetSubsystem<UChessManagerSubsystem>())
+	{
+		if (UDataTable* Table = ChessManager->GetDataTableByName("DT_ChessPointConfig"))
+		{
+			TArray<FChessPointConfig*> AllRows;
+			Table->GetAllRows<FChessPointConfig>(TEXT("SetChessPoint"),AllRows);
+			for (const FChessPointConfig* Row : AllRows)
+			{
+				if (!Row) continue;
+				
+				if (BoardMap.Find(Row->ChessLocation) && Row->ChessActor)
+				{
+					const FRotator SpawnRotation = FRotator::ZeroRotator;
+					AChessPoint* Point = World->SpawnActor<AChessPoint>(Row->ChessActor,BoardMap.Find(Row->ChessLocation)->Get()->GetActorLocation(),SpawnRotation,SpawnParams);
+					if (!Point)
+					{
+						UE_LOG(LogTemp, Warning, TEXT("Can't SpawnChessPoint"));
+					}
+				}
+			}
+		}
+	}
 }

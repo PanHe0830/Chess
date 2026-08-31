@@ -9,6 +9,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
 #include "Chess/ChessGamePlayTag.h"
+#include "Chess/Actor/ChessBoard.h"
 #include "Chess/Actor/ChessPoint.h"
 #include "Chess/SubSystem/ChessManagerSubsystem.h"
 
@@ -42,48 +43,60 @@ void AChessPlayerController::SetupInputComponent()
 
 void AChessPlayerController::MouseLeftButtonClicked(const FInputActionValue& Value)
 {
-	UE_LOG(LogTemp, Warning, TEXT("AChessPlayerController::MouseLeftButtonClicked"));
-	FHitResult Hit;
-	const bool bHit = GetHitResultUnderCursor(
-		ECC_Visibility,
-		false,
-		Hit
-	);
-	
-	if (!bHit)
+	UChessManagerSubsystem* ChessManager = GetGameInstance()
+		? GetGameInstance()->GetSubsystem<UChessManagerSubsystem>()
+		: nullptr;
+	if (!ChessManager)
 	{
 		return;
 	}
-	
-	if (AChessPoint* Piece = Cast<AChessPoint>(Hit.GetActor()))
+
+	FHitResult Hit;
+	if (!GetHitResultUnderCursor(ECC_Visibility, false, Hit))
 	{
-		if (UChessManagerSubsystem* ChessManager = GetGameInstance()->GetSubsystem<UChessManagerSubsystem>())
-		{
-			ChessManager->SetCurrentSelectedActor(Piece);
-		}
-		UE_LOG(LogTemp, Warning, TEXT("Selected: %s"), *Piece->GetName());
+		return;
 	}
-	else
+
+	AChessPoint* HitPiece = Cast<AChessPoint>(Hit.GetActor());
+	AChessPoint* SelectedPiece = Cast<AChessPoint>(ChessManager->GetCurrentSelectedActor());
+
+	if (HitPiece)
 	{
-		UChessManagerSubsystem* ChessManager = GetGameInstance()->GetSubsystem<UChessManagerSubsystem>();
-		AChessPoint* ChessPoint = ChessManager ? Cast<AChessPoint>(ChessManager->GetCurrentSelectedActor()): nullptr;
-		if (!ChessPoint)
+		const bool bCanCapture = SelectedPiece
+			&& SelectedPiece != HitPiece
+			&& SelectedPiece->GetChessCamp() != HitPiece->GetChessCamp()
+			&& SelectedPiece->GetChessCamp() != EChessCamp::ECT_MAX
+			&& HitPiece->GetChessCamp() != EChessCamp::ECT_MAX;
+
+		if (bCanCapture)
 		{
+			const FVector TargetLocation = HitPiece->GetLogicalLocation();
+			ChessManager->SetCurrentSelectedActor(nullptr);
+			ServerRequestChessMove(SelectedPiece, TargetLocation);
 			return;
 		}
 
-		// 先取消选中，把抬起的 Z 降回去，再用逻辑高度作为落点 Z
-		const FVector CurrentLocation = ChessPoint->GetActorLocation();
-		ChessManager->SetCurrentSelectedActor(nullptr);
-		const FVector LogicalLocation = ChessPoint->GetActorLocation();
-
-		const FVector TargetLocation(
-			Hit.ImpactPoint.X,
-			Hit.ImpactPoint.Y,
-			LogicalLocation.Z);
-
-		ServerRequestChessMove(ChessPoint, TargetLocation);
+		ChessManager->SetCurrentSelectedActor(HitPiece);
+		return;
 	}
+
+	if (!SelectedPiece)
+	{
+		return;
+	}
+
+	const float LogicalZ = SelectedPiece->GetLogicalLocation().Z;
+	ChessManager->SetCurrentSelectedActor(nullptr);
+
+	FVector TargetLocation(Hit.ImpactPoint.X, Hit.ImpactPoint.Y, LogicalZ);
+	if (const AChessBoard* Board = Cast<AChessBoard>(Hit.GetActor()))
+	{
+		const FVector BoardLocation = Board->GetActorLocation();
+		TargetLocation.X = BoardLocation.X;
+		TargetLocation.Y = BoardLocation.Y;
+	}
+
+	ServerRequestChessMove(SelectedPiece, TargetLocation);
 }
 
 void AChessPlayerController::MouseRightButtonClicked(const FInputActionValue& Value)

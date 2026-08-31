@@ -21,6 +21,7 @@ namespace AssetConfig
 class UDataTable;
 class UDataAsset;
 class AChessBoard;
+class AActor;
 
 /**
  * 
@@ -33,6 +34,12 @@ public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;
 	
+	UDataTable* GetDataTableByName(const FName TableName);
+	UDataAsset* GetDataAssetByName(const FName TableName);
+
+	void SetCurrentSelectedActor(AActor* NewSelected);
+	AActor* GetCurrentSelectedActor() const;
+	
 private:
 	UPROPERTY()
 	TMap<FName, TObjectPtr<UDataTable>> TableConfigMap;
@@ -42,4 +49,7 @@ private:
 	
 	void LoadDataTables();
 	void LoadDataAssets();
+
+	UPROPERTY()
+	TObjectPtr<AActor> CurrentSelectedActor;
 };
