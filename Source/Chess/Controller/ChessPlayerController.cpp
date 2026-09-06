@@ -42,57 +42,57 @@ void AChessPlayerController::SetupInputComponent()
 
 void AChessPlayerController::MouseLeftButtonClicked(const FInputActionValue& Value)
 {
-	UE_LOG(LogTemp, Warning, TEXT("AChessPlayerController::MouseLeftButtonClicked"));
-	FHitResult Hit;
-	const bool bHit = GetHitResultUnderCursor(
-		ECC_Visibility,
-		false,
-		Hit
-	);
-	
-	if (!bHit)
-	{
-		return;
-	}
-	
-	if (AChessPoint* Piece = Cast<AChessPoint>(Hit.GetActor()))
-	{
-		if (UChessManagerSubsystem* ChessManager = GetGameInstance()->GetSubsystem<UChessManagerSubsystem>())
-		{
-			ChessManager->SetCurrentSelectedActor(Piece);
-		}
-		UE_LOG(LogTemp, Warning, TEXT("Selected: %s"), *Piece->GetName());
-	}
-	else
-	{
-		UChessManagerSubsystem* ChessManager = GetGameInstance()->GetSubsystem<UChessManagerSubsystem>();
-		AChessPoint* ChessPoint = ChessManager ? Cast<AChessPoint>(ChessManager->GetCurrentSelectedActor()): nullptr;
-		if (!ChessPoint)
-		{
-			return;
-		}
-
-		// 先取消选中，把抬起的 Z 降回去，再用逻辑高度作为落点 Z
-		const FVector CurrentLocation = ChessPoint->GetActorLocation();
-		ChessManager->SetCurrentSelectedActor(nullptr);
-		const FVector LogicalLocation = ChessPoint->GetActorLocation();
-
-		const FVector TargetLocation(
-			Hit.ImpactPoint.X,
-			Hit.ImpactPoint.Y,
-			LogicalLocation.Z);
-
-		ServerRequestChessMove(ChessPoint, TargetLocation);
-	}
+	//UE_LOG(LogTemp, Warning, TEXT("AChessPlayerController::MouseLeftButtonClicked"));
+	//FHitResult Hit;
+	//const bool bHit = GetHitResultUnderCursor(
+	//	ECC_Visibility,
+	//	false,
+	//	Hit
+	//);
+	//
+	//if (!bHit)
+	//{
+	//	return;
+	//}
+	//
+	//if (AChessPoint* Piece = Cast<AChessPoint>(Hit.GetActor()))
+	//{
+	//	if (UChessManagerSubsystem* ChessManager = GetGameInstance()->GetSubsystem<UChessManagerSubsystem>())
+	//	{
+	//		ChessManager->SetCurrentSelectedActor(Piece);
+	//	}
+	//	UE_LOG(LogTemp, Warning, TEXT("Selected: %s"), *Piece->GetName());
+	//}
+	//else
+	//{
+	//	UChessManagerSubsystem* ChessManager = GetGameInstance()->GetSubsystem<UChessManagerSubsystem>();
+	//	AChessPoint* ChessPoint = ChessManager ? Cast<AChessPoint>(ChessManager->GetCurrentSelectedActor()): nullptr;
+	//	if (!ChessPoint)
+	//	{
+	//		return;
+	//	}
+	//
+	//	// 先取消选中，把抬起的 Z 降回去，再用逻辑高度作为落点 Z
+	//	const FVector CurrentLocation = ChessPoint->GetActorLocation();
+	//	ChessManager->SetCurrentSelectedActor(nullptr);
+	//	const FVector LogicalLocation = ChessPoint->GetActorLocation();
+	//
+	//	const FVector TargetLocation(
+	//		Hit.ImpactPoint.X,
+	//		Hit.ImpactPoint.Y,
+	//		LogicalLocation.Z);
+	//
+	//	ServerRequestChessMove(ChessPoint, TargetLocation);
+	//}
 }
 
 void AChessPlayerController::MouseRightButtonClicked(const FInputActionValue& Value)
 {
-	UE_LOG(LogTemp, Warning, TEXT("AChessPlayerController::MouseRightButtonClicked"));
-	if (UChessManagerSubsystem* ChessManager = GetGameInstance()->GetSubsystem<UChessManagerSubsystem>())
-	{
-		ChessManager->SetCurrentSelectedActor(nullptr);
-	}
+	//UE_LOG(LogTemp, Warning, TEXT("AChessPlayerController::MouseRightButtonClicked"));
+	//if (UChessManagerSubsystem* ChessManager = GetGameInstance()->GetSubsystem<UChessManagerSubsystem>())
+	//{
+	//	ChessManager->SetCurrentSelectedActor(nullptr);
+	//}
 }
 
 void AChessPlayerController::ServerRequestChessMove_Implementation(class AChessPoint* Piece, FVector_NetQuantize TargetLocation)
