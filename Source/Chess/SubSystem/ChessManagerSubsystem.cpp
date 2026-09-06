@@ -4,11 +4,8 @@
 #include "ChessManagerSubsystem.h"
 
 #include "AssetRegistry/AssetRegistryModule.h"
-#include "Chess/Actor/ChessBoard.h"
-#include "Chess/DataAsset/ChessConfig.h"
 #include "Engine/DataTable.h"
 #include "Engine/DataAsset.h"
-#include "Chess/Datatable/ChessPointConfig.h"
 #include "Chess/Actor/ChessPoint.h"
 
 void UChessManagerSubsystem::Initialize(FSubsystemCollectionBase& Collection)
@@ -21,8 +18,47 @@ void UChessManagerSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 
 void UChessManagerSubsystem::Deinitialize()
 {
-	
+	SetCurrentSelectedActor(nullptr);
 	Super::Deinitialize();
+}
+
+void UChessManagerSubsystem::SetCurrentSelectedActor(AActor* NewSelected)
+{
+	if (CurrentSelectedActor.Get() == NewSelected)
+	{
+		return;
+	}
+
+	if (AChessPoint* OldPiece = Cast<AChessPoint>(CurrentSelectedActor.Get()))
+	{
+		OldPiece->Deselect();
+	}
+
+	CurrentSelectedActor = NewSelected;
+
+	if (AChessPoint* NewPiece = Cast<AChessPoint>(NewSelected))
+	{
+		NewPiece->Select();
+	}
+}
+
+AActor* UChessManagerSubsystem::GetCurrentSelectedActor() const
+{
+	return CurrentSelectedActor.Get();
+}
+
+UDataTable* UChessManagerSubsystem::GetDataTableByName(const FName TableName)
+{
+	if (TableConfigMap.Num() <= 0 || TableName.IsNone()) return nullptr;
+	
+	return Cast<UDataTable>(TableConfigMap[TableName]);
+}
+
+UDataAsset* UChessManagerSubsystem::GetDataAssetByName(const FName TableName)
+{
+	if (AssetConfigMap.Num() <= 0 || TableName.IsNone()) return nullptr;
+	
+	return Cast<UDataAsset>(AssetConfigMap[TableName]);
 }
 
 void UChessManagerSubsystem::LoadDataTables()

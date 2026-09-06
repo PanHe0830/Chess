@@ -9,6 +9,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
 #include "Chess/ChessGamePlayTag.h"
+#include "Chess/Actor/ChessBoard.h"
 #include "Chess/Actor/ChessPoint.h"
 #include "Chess/SubSystem/ChessManagerSubsystem.h"
 
@@ -42,6 +43,7 @@ void AChessPlayerController::SetupInputComponent()
 
 void AChessPlayerController::MouseLeftButtonClicked(const FInputActionValue& Value)
 {
+<<<<<<< HEAD
 	//UE_LOG(LogTemp, Warning, TEXT("AChessPlayerController::MouseLeftButtonClicked"));
 	//FHitResult Hit;
 	//const bool bHit = GetHitResultUnderCursor(
@@ -84,6 +86,62 @@ void AChessPlayerController::MouseLeftButtonClicked(const FInputActionValue& Val
 	//
 	//	ServerRequestChessMove(ChessPoint, TargetLocation);
 	//}
+=======
+	UChessManagerSubsystem* ChessManager = GetGameInstance()
+		? GetGameInstance()->GetSubsystem<UChessManagerSubsystem>()
+		: nullptr;
+	if (!ChessManager)
+	{
+		return;
+	}
+
+	FHitResult Hit;
+	if (!GetHitResultUnderCursor(ECC_Visibility, false, Hit))
+	{
+		return;
+	}
+
+	AChessPoint* HitPiece = Cast<AChessPoint>(Hit.GetActor());
+	AChessPoint* SelectedPiece = Cast<AChessPoint>(ChessManager->GetCurrentSelectedActor());
+
+	if (HitPiece)
+	{
+		const bool bCanCapture = SelectedPiece
+			&& SelectedPiece != HitPiece
+			&& SelectedPiece->GetChessCamp() != HitPiece->GetChessCamp()
+			&& SelectedPiece->GetChessCamp() != EChessCamp::ECT_MAX
+			&& HitPiece->GetChessCamp() != EChessCamp::ECT_MAX;
+
+		if (bCanCapture)
+		{
+			const FVector TargetLocation = HitPiece->GetLogicalLocation();
+			ChessManager->SetCurrentSelectedActor(nullptr);
+			ServerRequestChessMove(SelectedPiece, TargetLocation);
+			return;
+		}
+
+		ChessManager->SetCurrentSelectedActor(HitPiece);
+		return;
+	}
+
+	if (!SelectedPiece)
+	{
+		return;
+	}
+
+	const float LogicalZ = SelectedPiece->GetLogicalLocation().Z;
+	ChessManager->SetCurrentSelectedActor(nullptr);
+
+	FVector TargetLocation(Hit.ImpactPoint.X, Hit.ImpactPoint.Y, LogicalZ);
+	if (const AChessBoard* Board = Cast<AChessBoard>(Hit.GetActor()))
+	{
+		const FVector BoardLocation = Board->GetActorLocation();
+		TargetLocation.X = BoardLocation.X;
+		TargetLocation.Y = BoardLocation.Y;
+	}
+
+	ServerRequestChessMove(SelectedPiece, TargetLocation);
+>>>>>>> 12b56fb2d91ea1e4cba91edbcd642900708ec93b
 }
 
 void AChessPlayerController::MouseRightButtonClicked(const FInputActionValue& Value)
