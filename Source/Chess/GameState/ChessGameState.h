@@ -14,4 +14,5 @@ class CHESS_API AChessGameState : public AGameState
 {
 	GENERATED_BODY()
 	
+	
 };
