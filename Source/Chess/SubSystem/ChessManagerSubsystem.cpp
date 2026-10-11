@@ -4,9 +4,12 @@
 #include "ChessManagerSubsystem.h"
 
 #include "AssetRegistry/AssetRegistryModule.h"
+#include "Blueprint/UserWidget.h"
 #include "Engine/DataTable.h"
 #include "Engine/DataAsset.h"
 #include "Chess/Actor/ChessPoint.h"
+#include "Chess/DataTable/UIConfig.h"
+#include "Kismet/GameplayStatics.h"
 
 void UChessManagerSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
@@ -14,6 +17,7 @@ void UChessManagerSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	
 	LoadDataTables();
 	LoadDataAssets();
+	LoadWidgetsConfig();
 }
 
 void UChessManagerSubsystem::Deinitialize()
@@ -118,5 +122,26 @@ void UChessManagerSubsystem::LoadDataAssets()
 
 void UChessManagerSubsystem::LoadWidgetsConfig()
 {
-	
+	UWorld* World = GetWorld();
+	if (!World) return;
+	if (UDataTable* UIConfigTable = GetDataTableByName("DT_UIConfig"))
+	{
+		TArray<FUIConfig*> UIConfigArray;
+		UIConfigTable->GetAllRows(TEXT("DT_UIConfig"),UIConfigArray);
+		for (const FUIConfig* UIConfig : UIConfigArray)
+		{
+			if (UIConfig->UINameWidget)
+			{
+				UUserWidget* Widget = CreateWidget<UUserWidget>(World,UIConfig->UINameWidget);
+				if (Widget)
+				{
+					WidgetConfigMap.Add(UIConfig->UIName,Widget);
+				}
+				else
+				{
+					UE_LOG(LogTemp , Error, TEXT("CreateWidgets for UINameWidget : %s"),*UIConfig->UIName.ToString());
+				}
+			}
+		}
+	}
 }
