@@ -17,10 +17,13 @@ class CHESS_API AChessGameMode : public AGameMode
 protected:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	virtual void Tick( float DeltaTime ) override;
 private:
 	void SpawnChessBoard();
 	void SetChessPoint();
-	
+	void StartChessGameModeTimer();
+	void StopChessGameModeTimer();
+	void ChangeChessTurn();
 public:
 	UPROPERTY(EditAnywhere , Category = "Chess")
 	TSubclassOf<AChessBoard> ChessBoardClass;
@@ -32,7 +35,12 @@ public:
 	float ChessBoardInit = 0.0f;
 	UPROPERTY(EditAnywhere, Category = "Chess")
 	float ChessBoardScale = 300.0f;
+	// 回合切换时间
+	UPROPERTY(EditAnywhere, Category = "Chess")
+	float TurnDuration = 30.0f;
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Chess")
 	TMap<FVector2D , TObjectPtr<AChessBoard>> BoardMap;
+	
+	FTimerHandle TimerHandle;
 };

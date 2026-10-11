@@ -15,7 +15,9 @@ UCLASS()
 class CHESS_API UMainWidget : public UUserWidget
 {
 	GENERATED_BODY()
-	
+protected:
+	virtual void NativeConstruct() override;
+	virtual void NativeDestruct() override;
 public:
 	UPROPERTY(VisibleAnywhere , Category = "UI|MainWidget" , meta = (BindWidget))
 	UOverlay* ChessDetailOverlay;

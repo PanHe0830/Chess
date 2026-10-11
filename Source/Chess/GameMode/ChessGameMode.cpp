@@ -6,6 +6,7 @@
 #include "Chess/Actor/ChessBoard.h"
 #include "Chess/Actor/ChessPoint.h"
 #include "Chess/Datatable/ChessPointConfig.h"
+#include "Chess/GameState/ChessGameState.h"
 #include "Chess/SubSystem/ChessManagerSubsystem.h"
 
 
@@ -32,6 +33,11 @@ void AChessGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
 		}
 		BoardMap.Empty();
 	}
+}
+
+void AChessGameMode::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
 }
 
 void AChessGameMode::SpawnChessBoard()
@@ -107,5 +113,39 @@ void AChessGameMode::SetChessPoint()
 				}
 			}
 		}
+	}
+}
+
+void AChessGameMode::StartChessGameModeTimer()
+{
+	UWorld* World = GetWorld();
+	if (World)
+	{
+		World->GetTimerManager().ClearTimer(TimerHandle);
+		World->GetTimerManager().SetTimer(
+			TimerHandle,
+			this,
+			&AChessGameMode::ChangeChessTurn,
+			TurnDuration,
+			false
+		);
+	}
+}
+
+void AChessGameMode::StopChessGameModeTimer()
+{
+	UWorld* World = GetWorld();
+	if (World)
+	{
+		World->GetTimerManager().ClearTimer(TimerHandle);
+	}
+}
+
+void AChessGameMode::ChangeChessTurn()
+{
+	AChessGameState* ChessGS = GetGameState<AChessGameState>();
+	if (ChessGS)
+	{
+		ChessGS->ChangeChessTurn();
 	}
 }

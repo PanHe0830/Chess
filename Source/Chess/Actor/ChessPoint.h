@@ -60,5 +60,8 @@ public:
 	
 	UPROPERTY(EditAnywhere, Category = ChessPoint)
 	TSubclassOf<UGameplayAbility> MoveAbility;
+	
+	UFUNCTION(BlueprintCallable, Category="Ability System")
+	void GiveAbility(TSubclassOf<UGameplayAbility> Ability);
 	// ====================================GAS====================================
 };

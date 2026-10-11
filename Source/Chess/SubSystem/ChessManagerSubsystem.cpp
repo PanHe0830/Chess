@@ -115,3 +115,8 @@ void UChessManagerSubsystem::LoadDataAssets()
 		}
 	}
 }
+
+void UChessManagerSubsystem::LoadWidgetsConfig()
+{
+	
+}

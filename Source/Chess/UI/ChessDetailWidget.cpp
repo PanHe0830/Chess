@@ -3,3 +3,12 @@
 
 #include "ChessDetailWidget.h"
 
+void UChessDetailWidget::NativeConstruct()
+{
+	Super::NativeConstruct();
+}
+
+void UChessDetailWidget::NativeDestruct()
+{
+	Super::NativeDestruct();
+}

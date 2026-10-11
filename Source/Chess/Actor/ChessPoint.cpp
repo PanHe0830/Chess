@@ -91,3 +91,15 @@ UAbilitySystemComponent* AChessPoint::GetAbilitySystemComponent() const
 	return GameAbilitySystemComponent;
 }
 
+void AChessPoint::GiveAbility(TSubclassOf<UGameplayAbility> Ability)
+{
+	if(GameAbilitySystemComponent)
+	{
+		if(HasAuthority() && Ability)
+		{
+			GameAbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(Ability, 1));
+		}
+		GameAbilitySystemComponent->InitAbilityActorInfo(this, this);
+	}
+}
+

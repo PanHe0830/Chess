@@ -47,8 +47,12 @@ private:
 	UPROPERTY()
 	TMap<FName, TObjectPtr<UDataAsset>> AssetConfigMap;
 	
+	UPROPERTY()
+	TMap<FName , TObjectPtr<UUserWidget>> WidgetConfigMap;
+	
 	void LoadDataTables();
 	void LoadDataAssets();
+	void LoadWidgetsConfig();
 
 	UPROPERTY()
 	TObjectPtr<AActor> CurrentSelectedActor;

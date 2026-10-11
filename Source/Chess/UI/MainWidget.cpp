@@ -3,3 +3,12 @@
 
 #include "MainWidget.h"
 
+void UMainWidget::NativeConstruct()
+{
+	Super::NativeConstruct();
+}
+
+void UMainWidget::NativeDestruct()
+{
+	Super::NativeDestruct();
+}

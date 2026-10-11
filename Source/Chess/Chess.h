@@ -26,3 +26,12 @@ enum class EChessCamp : uint8
 	ECT_Blue		UMETA(DisplayName = "Blue(蓝方)"),
 	ECT_MAX
 };
+
+// 当前回合
+UENUM(Blueprintable)
+enum class EChessTurn : uint8
+{
+	EXT_Red			UMETA(DisplayName = "Red"),
+	EXT_Blue		UMETA(DisplayName = "Blue"),
+	EXT_MAX
+};

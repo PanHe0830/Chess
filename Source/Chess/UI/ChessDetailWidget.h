@@ -13,5 +13,7 @@ UCLASS()
 class CHESS_API UChessDetailWidget : public UUserWidget
 {
 	GENERATED_BODY()
-	
+protected:
+	virtual void NativeConstruct() override;
+	virtual void NativeDestruct() override;
 };
