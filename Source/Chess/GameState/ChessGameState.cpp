@@ -16,6 +16,7 @@ void AChessGameState::ChangeChessTurn()
 		CurrentTurn == EChessTurn::EXT_Red
 		? EChessTurn::EXT_Blue
 		: EChessTurn::EXT_Red;
+	OnRep_CurrentTurn();
 }
 
 void AChessGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -23,4 +24,9 @@ void AChessGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	
 	DOREPLIFETIME(AChessGameState, CurrentTurn);
+}
+
+void AChessGameState::OnRep_CurrentTurn()
+{
+	OnTurnChanged.Broadcast(CurrentTurn);
 }

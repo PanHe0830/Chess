@@ -4,13 +4,16 @@
 #include "MainWidget.h"
 
 #include "BeginPlayWidget.h"
+#include "Chess/GameState/ChessGameState.h"
 #include "Components/Overlay.h"
 #include "Components/OverlaySlot.h"
 #include "Chess/SubSystem/ChessManagerSubsystem.h"
+#include "Components/TextBlock.h"
 
 void UMainWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
+	CampName->SetText(FText::FromString(TEXT("")));
 }
 
 void UMainWidget::NativeDestruct()
@@ -34,4 +37,22 @@ void UMainWidget::InitializeWidget()
 			}
 		}
 	}
+	
+	if (AChessGameState* ChessGS = GetWorld() ? GetWorld()->GetGameState<AChessGameState>() : nullptr)
+	{
+		ChessGS->OnTurnChanged.AddDynamic(this, &UMainWidget::HandleTurnChanged);
+		HandleTurnChanged(ChessGS->CurrentTurn);
+	}
+}
+
+void UMainWidget::HandleTurnChanged(EChessTurn NewTurn)
+{
+	if (!CampName)
+	{
+		return;
+	}
+	const FText TurnText = NewTurn == EChessTurn::EXT_Red
+		? FText::FromString(TEXT("红方"))
+		: FText::FromString(TEXT("蓝方"));
+	CampName->SetText(TurnText);
 }

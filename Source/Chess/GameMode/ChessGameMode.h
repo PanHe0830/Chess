@@ -41,7 +41,7 @@ public:
 	float ChessBoardScale = 300.0f;
 	// 回合切换时间
 	UPROPERTY(EditAnywhere, Category = "Chess")
-	float TurnDuration = 30.0f;
+	float TurnDuration = 10.0f;
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Chess")
 	TMap<FVector2D , TObjectPtr<AChessBoard>> BoardMap;

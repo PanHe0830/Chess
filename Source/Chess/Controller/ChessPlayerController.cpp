@@ -15,6 +15,8 @@
 #include "Chess/GameMode/ChessGameMode.h"
 #include "Chess/PlayerState/ChessPlayerState.h"
 #include "Chess/SubSystem/ChessManagerSubsystem.h"
+#include "Chess/UI/MainWidget.h"
+#include "Components/TextBlock.h"
 
 void AChessPlayerController::BeginPlay()
 {
@@ -136,6 +138,10 @@ void AChessPlayerController::ClientCloseReadyWidget_Implementation()
 	if (UUserWidget* ReadyWidget = Manager->GetWidgetByName(TEXT("WBP_BeginPlayWidget")))
 	{
 		ReadyWidget->RemoveFromParent();
+	}
+	if (UMainWidget* ReadyWidget = Cast<UMainWidget>(Manager->GetWidgetByName(TEXT("WBP_MainWidget"))))
+	{
+		ReadyWidget->CampName->SetText(FText::FromString(TEXT("红方")));
 	}
 }
 

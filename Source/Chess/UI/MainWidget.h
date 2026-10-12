@@ -4,8 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Chess/Chess.h"
 #include "MainWidget.generated.h"
 
+class UTextBlock;
 class UOverlay;
 
 /**
@@ -20,8 +22,12 @@ protected:
 	virtual void NativeDestruct() override;
 public:
 	void InitializeWidget();
+	UFUNCTION()
+	void HandleTurnChanged(EChessTurn NewTurn);
 	UPROPERTY(VisibleAnywhere , Category = "UI|MainWidget" , meta = (BindWidget))
 	TObjectPtr<UOverlay> ChessDetailOverlay;
 	UPROPERTY(VisibleAnywhere , Category = "UI|MainWidget" , meta = (BindWidget))
 	TObjectPtr<UOverlay> BeginOverlay;
+	UPROPERTY(VisibleAnywhere , Category = "UI|MainWidget" , meta = (BindWidget))
+	TObjectPtr<UTextBlock> CampName;
 };

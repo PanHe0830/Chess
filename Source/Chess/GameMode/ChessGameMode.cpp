@@ -128,7 +128,7 @@ void AChessGameMode::NotifyPlayerReady()
 	}
 
 	const AGameStateBase* GS = GameState;
-	if (!GS /**|| GS->PlayerArray.Num() < 2**/)
+	if (!GS || GS->PlayerArray.Num() > 2)
 	{
 		return;
 	}
@@ -196,4 +196,5 @@ void AChessGameMode::ChangeChessTurn()
 	{
 		ChessGS->ChangeChessTurn();
 	}
+	StartChessGameModeTimer();
 }
