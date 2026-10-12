@@ -5,14 +5,18 @@
 
 #include "Chess/Actor/ChessBoard.h"
 #include "Chess/Actor/ChessPoint.h"
+#include "Chess/Controller/ChessPlayerController.h"
 #include "Chess/Datatable/ChessPointConfig.h"
 #include "Chess/GameState/ChessGameState.h"
+#include "Chess/PlayerState/ChessPlayerState.h"
 #include "Chess/SubSystem/ChessManagerSubsystem.h"
-
 
 void AChessGameMode::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	GameStateClass = AChessGameState::StaticClass();
+	PlayerStateClass = AChessPlayerState::StaticClass();
 	
 	SpawnChessBoard();
 	SetChessPoint();
@@ -112,6 +116,50 @@ void AChessGameMode::SetChessPoint()
 					}
 				}
 			}
+		}
+	}
+}
+
+void AChessGameMode::NotifyPlayerReady()
+{
+	if (bMatchStarted)
+	{
+		return;
+	}
+
+	const AGameStateBase* GS = GameState;
+	if (!GS /**|| GS->PlayerArray.Num() < 2**/)
+	{
+		return;
+	}
+
+	for (const APlayerState* PS : GS->PlayerArray)
+	{
+		const AChessPlayerState* ChessPS = Cast<AChessPlayerState>(PS);
+		if (!ChessPS || !ChessPS->IsReady())
+		{
+			return;
+		}
+	}
+
+	bMatchStarted = true;
+	StartChessGameModeTimer();
+	CloseReadyWidgets();
+}
+
+void AChessGameMode::CloseReadyWidgets()
+{
+	UWorld* World = GetWorld();
+	if (!World)
+	{
+		return;
+	}
+
+	for (FConstPlayerControllerIterator It = World->GetPlayerControllerIterator(); It; ++It)
+	{
+		if (AChessPlayerController* PC = Cast<AChessPlayerController>(It->Get()))
+		{
+			PC->ClientCloseReadyWidget();
 		}
 	}
 }

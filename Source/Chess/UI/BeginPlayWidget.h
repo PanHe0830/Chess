@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "BeginPlayWidget.generated.h"
 
+class UButton;
 /**
  * 
  */
@@ -16,4 +17,9 @@ class CHESS_API UBeginPlayWidget : public UUserWidget
 protected:
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
+	UFUNCTION()
+	void OnReadyButtonClicked();
+public:
+	UPROPERTY(EditAnywhere ,BlueprintReadOnly , meta = (BindWidget))
+	TObjectPtr<UButton> ReadyButton;
 };

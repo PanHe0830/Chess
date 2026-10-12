@@ -19,6 +19,9 @@ protected:
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
 public:
+	void InitializeWidget();
 	UPROPERTY(VisibleAnywhere , Category = "UI|MainWidget" , meta = (BindWidget))
-	UOverlay* ChessDetailOverlay;
+	TObjectPtr<UOverlay> ChessDetailOverlay;
+	UPROPERTY(VisibleAnywhere , Category = "UI|MainWidget" , meta = (BindWidget))
+	TObjectPtr<UOverlay> BeginOverlay;
 };

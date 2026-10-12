@@ -4,6 +4,7 @@
 #include "ChessPlayerController.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
+#include "Blueprint/UserWidget.h"
 #include "Abilities/GameplayAbilityTargetTypes.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
@@ -11,6 +12,8 @@
 #include "Chess/ChessGamePlayTag.h"
 #include "Chess/Actor/ChessBoard.h"
 #include "Chess/Actor/ChessPoint.h"
+#include "Chess/GameMode/ChessGameMode.h"
+#include "Chess/PlayerState/ChessPlayerState.h"
 #include "Chess/SubSystem/ChessManagerSubsystem.h"
 
 void AChessPlayerController::BeginPlay()
@@ -106,6 +109,34 @@ void AChessPlayerController::MouseRightButtonClicked(const FInputActionValue& Va
 	//{
 	//	ChessManager->SetCurrentSelectedActor(nullptr);
 	//}
+}
+
+void AChessPlayerController::ServerNotifyReady_Implementation()
+{
+	if (AChessPlayerState* ChessPlayerState = GetPlayerState<AChessPlayerState>())
+	{
+		ChessPlayerState->SetReady(true);
+	}
+
+	if (AChessGameMode* ChessGameMode = GetWorld() ? GetWorld()->GetAuthGameMode<AChessGameMode>() : nullptr)
+	{
+		ChessGameMode->NotifyPlayerReady();
+	}
+}
+
+void AChessPlayerController::ClientCloseReadyWidget_Implementation()
+{
+	UGameInstance* GameInstance = GetGameInstance();
+	UChessManagerSubsystem* Manager = GameInstance ? GameInstance->GetSubsystem<UChessManagerSubsystem>() : nullptr;
+	if (!Manager)
+	{
+		return;
+	}
+
+	if (UUserWidget* ReadyWidget = Manager->GetWidgetByName(TEXT("WBP_BeginPlayWidget")))
+	{
+		ReadyWidget->RemoveFromParent();
+	}
 }
 
 void AChessPlayerController::ServerRequestChessMove_Implementation(class AChessPoint* Piece, FVector_NetQuantize TargetLocation)

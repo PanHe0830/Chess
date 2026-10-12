@@ -36,6 +36,7 @@ public:
 	
 	UDataTable* GetDataTableByName(const FName TableName);
 	UDataAsset* GetDataAssetByName(const FName TableName);
+	UUserWidget* GetWidgetByName(const FName TableName);
 
 	void SetCurrentSelectedActor(AActor* NewSelected);
 	AActor* GetCurrentSelectedActor() const;

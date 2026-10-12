@@ -65,6 +65,13 @@ UDataAsset* UChessManagerSubsystem::GetDataAssetByName(const FName TableName)
 	return Cast<UDataAsset>(AssetConfigMap[TableName]);
 }
 
+UUserWidget* UChessManagerSubsystem::GetWidgetByName(const FName TableName)
+{
+	if (TableName.IsNone()) return nullptr;
+	
+	return WidgetConfigMap[TableName];
+}
+
 void UChessManagerSubsystem::LoadDataTables()
 {
 	TableConfigMap.Empty();

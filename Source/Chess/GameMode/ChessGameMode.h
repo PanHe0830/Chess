@@ -24,7 +24,11 @@ private:
 	void StartChessGameModeTimer();
 	void StopChessGameModeTimer();
 	void ChangeChessTurn();
+	void CloseReadyWidgets();
+
+	bool bMatchStarted = false;
 public:
+	void NotifyPlayerReady();
 	UPROPERTY(EditAnywhere , Category = "Chess")
 	TSubclassOf<AChessBoard> ChessBoardClass;
 	UPROPERTY(EditAnywhere , Category = "Chess")

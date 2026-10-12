@@ -13,5 +13,13 @@ UCLASS()
 class CHESS_API AChessPlayerState : public APlayerState
 {
 	GENERATED_BODY()
-	
+public:
+	void SetReady(bool bNewReady);
+	bool IsReady() const { return bReady; }
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+private:
+	UPROPERTY(Replicated)
+	bool bReady = false;
 };

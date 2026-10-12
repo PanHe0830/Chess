@@ -13,5 +13,13 @@ UCLASS()
 class CHESS_API AChessHUD : public AHUD
 {
 	GENERATED_BODY()
+protected:
+	virtual void BeginPlay() override;
+public:
+	virtual void DrawHUD() override;
+private:
+	void InitializeGameMainWidget();
 	
+	UPROPERTY(EditAnywhere , Category = "HUD")
+	TSubclassOf<class UUserWidget> MainWidget;
 };

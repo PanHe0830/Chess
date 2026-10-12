@@ -38,4 +38,10 @@ public:
 	
 	UFUNCTION(Server, Reliable)
 	void ServerRequestChessMove(class AChessPoint* Piece, FVector_NetQuantize TargetLocation);
+
+	UFUNCTION(Server, Reliable)
+	void ServerNotifyReady();
+
+	UFUNCTION(Client, Reliable)
+	void ClientCloseReadyWidget();
 };
