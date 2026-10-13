@@ -29,4 +29,10 @@ struct FChessPointConfig : public FTableRowBase
 	// 棋子在棋盘上的位置
 	UPROPERTY(EditAnywhere, Category = Chess)
 	FVector2D ChessLocation;
+	
+	UPROPERTY(EditAnywhere, Category = Chess , DisplayName = "棋子移动规则配置")
+	TSubclassOf<UObject> MoveRule;
+	
+	UPROPERTY(EditAnywhere, Category = Chess, DisplayName = "棋子技能")
+	TArray<TSubclassOf<UGameplayAbility>> Abilities;
 };
