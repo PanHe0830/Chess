@@ -3,8 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Chess/Chess.h"
 #include "GameFramework/PlayerState.h"
 #include "ChessPlayerState.generated.h"
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnChessCampChanged, EChessCamp, NewCamp);
 
 /**
  * 
@@ -17,9 +20,21 @@ public:
 	void SetReady(bool bNewReady);
 	bool IsReady() const { return bReady; }
 
+	void SetCamp(EChessCamp NewCamp);
+	EChessCamp GetCamp() const { return Camp; }
+
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	UFUNCTION()
+	void OnRep_Camp();
+
+	UPROPERTY(BlueprintAssignable)
+	FOnChessCampChanged OnCampChanged;
 
 private:
 	UPROPERTY(Replicated)
 	bool bReady = false;
+
+	UPROPERTY(ReplicatedUsing = OnRep_Camp)
+	EChessCamp Camp = EChessCamp::ECT_MAX;
 };

@@ -17,7 +17,14 @@ class CHESS_API AChessGameMode : public AGameMode
 protected:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	virtual void PostLogin(APlayerController* NewPlayer) override;
+public:
 	virtual void Tick( float DeltaTime ) override;
+	
+protected:
+	virtual AActor* ChoosePlayerStart_Implementation(AController* Player) override;
+	virtual APawn* SpawnDefaultPawnAtTransform_Implementation(AController* NewPlayer, const FTransform& SpawnTransform) override;
+	virtual void FinishRestartPlayer(AController* NewPlayer, const FRotator& StartRotation) override;
 private:
 	void SpawnChessBoard();
 	void SetChessPoint();
@@ -27,6 +34,7 @@ private:
 	void CloseReadyWidgets();
 
 	bool bMatchStarted = false;
+	int32 AssignedPlayerCount = 0;
 public:
 	void NotifyPlayerReady();
 	UPROPERTY(EditAnywhere , Category = "Chess")

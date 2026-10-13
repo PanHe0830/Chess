@@ -17,12 +17,57 @@
 #include "Chess/SubSystem/ChessManagerSubsystem.h"
 #include "Chess/UI/MainWidget.h"
 #include "Components/TextBlock.h"
+#include "Net/UnrealNetwork.h"
 
 void AChessPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 	
 	SetShowMouseCursor(true);
+}
+
+void AChessPlayerController::AcknowledgePossession(APawn* P)
+{
+	Super::AcknowledgePossession(P);
+
+	if (P)
+	{
+		P->SetActorHiddenInGame(true);
+	}
+
+	ApplyStartViewRotation();
+}
+
+void AChessPlayerController::SetStartViewRotation(const FRotator& NewRotation)
+{
+	bHasStartViewRotation = true;
+	StartViewRotation = NewRotation;
+	ApplyStartViewRotation();
+	ClientSetRotation(NewRotation, true);
+}
+
+void AChessPlayerController::ApplyStartViewRotation()
+{
+	if (!bHasStartViewRotation)
+	{
+		return;
+	}
+
+	SetControlRotation(StartViewRotation);
+}
+
+void AChessPlayerController::OnRep_StartViewRotation()
+{
+	bHasStartViewRotation = true;
+	ApplyStartViewRotation();
+}
+
+void AChessPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AChessPlayerController, StartViewRotation);
+	DOREPLIFETIME(AChessPlayerController, bHasStartViewRotation);
 }
 
 void AChessPlayerController::SetupInputComponent()

@@ -10,14 +10,14 @@
 #include "Chess/GameState/ChessGameState.h"
 #include "Chess/PlayerState/ChessPlayerState.h"
 #include "Chess/SubSystem/ChessManagerSubsystem.h"
+#include "GameFramework/Pawn.h"
+#include "GameFramework/PlayerStart.h"
+#include "Kismet/GameplayStatics.h"
 
 void AChessGameMode::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	GameStateClass = AChessGameState::StaticClass();
-	PlayerStateClass = AChessPlayerState::StaticClass();
-	
+
 	SpawnChessBoard();
 	SetChessPoint();
 }
@@ -39,9 +39,75 @@ void AChessGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	}
 }
 
+void AChessGameMode::PostLogin(APlayerController* NewPlayer)
+{
+	if (AChessPlayerState* ChessPS = NewPlayer ? NewPlayer->GetPlayerState<AChessPlayerState>() : nullptr)
+	{
+		const EChessCamp Camp = AssignedPlayerCount == 0
+			? EChessCamp::ECT_Red
+			: EChessCamp::ECT_Blue;
+		ChessPS->SetCamp(Camp);
+		++AssignedPlayerCount;
+	}
+
+	Super::PostLogin(NewPlayer);
+
+	if (APawn* Pawn = NewPlayer ? NewPlayer->GetPawn() : nullptr)
+	{
+		Pawn->SetActorHiddenInGame(true);
+	}
+}
+
 void AChessGameMode::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+AActor* AChessGameMode::ChoosePlayerStart_Implementation(AController* Player)
+{
+	const AChessPlayerState* ChessPS = Player ? Player->GetPlayerState<AChessPlayerState>() : nullptr;
+	const FName StartTag = (ChessPS && ChessPS->GetCamp() == EChessCamp::ECT_Blue)
+		? TEXT("Blue")
+		: TEXT("Red");
+	TArray<AActor*> Starts;
+	UGameplayStatics::GetAllActorsOfClass(this, APlayerStart::StaticClass(), Starts);
+	for (AActor* Actor : Starts)
+	{
+		if (const APlayerStart* Start = Cast<APlayerStart>(Actor))
+		{
+			if (Start->PlayerStartTag == StartTag)
+			{
+				return Actor;
+			}
+		}
+	}
+	return Super::ChoosePlayerStart_Implementation(Player);
+}
+
+APawn* AChessGameMode::SpawnDefaultPawnAtTransform_Implementation(AController* NewPlayer, const FTransform& SpawnTransform)
+{
+	APawn* Pawn = Super::SpawnDefaultPawnAtTransform_Implementation(NewPlayer, SpawnTransform);
+	if (Pawn)
+	{
+		Pawn->SetActorHiddenInGame(true);
+	}
+	return Pawn;
+}
+
+void AChessGameMode::FinishRestartPlayer(AController* NewPlayer, const FRotator& StartRotation)
+{
+	if (APawn* Pawn = NewPlayer ? NewPlayer->GetPawn() : nullptr)
+	{
+		Pawn->SetActorRotation(StartRotation);
+		Pawn->SetActorHiddenInGame(true);
+	}
+
+	if (AChessPlayerController* ChessPC = Cast<AChessPlayerController>(NewPlayer))
+	{
+		ChessPC->SetStartViewRotation(StartRotation);
+	}
+
+	Super::FinishRestartPlayer(NewPlayer, StartRotation);
 }
 
 void AChessGameMode::SpawnChessBoard()

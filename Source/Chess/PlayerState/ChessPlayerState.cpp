@@ -15,10 +15,27 @@ void AChessPlayerState::SetReady(bool bNewReady)
 	bReady = bNewReady;
 }
 
+void AChessPlayerState::SetCamp(EChessCamp NewCamp)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	Camp = NewCamp;
+	OnRep_Camp();
+}
+
+void AChessPlayerState::OnRep_Camp()
+{
+	OnCampChanged.Broadcast(Camp);
+}
+
 void AChessPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AChessPlayerState, bReady);
+	DOREPLIFETIME(AChessPlayerState, Camp);
 }
 

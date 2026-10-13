@@ -21,6 +21,8 @@ protected:
 	virtual void BeginPlay() override;
 	
 	virtual void SetupInputComponent() override;
+	virtual void AcknowledgePossession(APawn* P) override;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 private:
 	UFUNCTION()
@@ -44,4 +46,18 @@ public:
 
 	UFUNCTION(Client, Reliable)
 	void ClientCloseReadyWidget();
+
+	void SetStartViewRotation(const FRotator& NewRotation);
+
+private:
+	void ApplyStartViewRotation();
+
+	UFUNCTION()
+	void OnRep_StartViewRotation();
+
+	UPROPERTY(ReplicatedUsing = OnRep_StartViewRotation)
+	FRotator StartViewRotation;
+
+	UPROPERTY(ReplicatedUsing = OnRep_StartViewRotation)
+	bool bHasStartViewRotation = false;
 };
