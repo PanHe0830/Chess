@@ -86,6 +86,17 @@ void AChessPoint::BeginPlay()
 	GameAbilitySystemComponent->GiveAbility(MoveSpec);
 }
 
+void AChessPoint::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+	
+	if (IsValid(MoveRule) && !MoveRule->HasAnyFlags(RF_ClassDefaultObject))
+	{
+		MoveRule->MarkAsGarbage();
+		MoveRule = nullptr;
+	}
+}
+
 UAbilitySystemComponent* AChessPoint::GetAbilitySystemComponent() const
 {
 	return GameAbilitySystemComponent;
@@ -101,5 +112,10 @@ void AChessPoint::GiveAbility(TSubclassOf<UGameplayAbility> Ability)
 		}
 		GameAbilitySystemComponent->InitAbilityActorInfo(this, this);
 	}
+}
+
+void AChessPoint::SetChessMoveRule(UObject* InMoveRule)
+{
+	MoveRule = InMoveRule;
 }
 

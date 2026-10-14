@@ -158,10 +158,6 @@ void AChessGameMode::SetChessPoint()
 	
 	if (World == nullptr) return;
 	
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.Owner = this;
-	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	
 	if (UChessManagerSubsystem* ChessManager = GetGameInstance()->GetSubsystem<UChessManagerSubsystem>())
 	{
 		if (UDataTable* Table = ChessManager->GetDataTableByName("DT_ChessPointConfig"))
@@ -170,17 +166,40 @@ void AChessGameMode::SetChessPoint()
 			Table->GetAllRows<FChessPointConfig>(TEXT("SetChessPoint"),AllRows);
 			for (const FChessPointConfig* Row : AllRows)
 			{
-				if (!Row) continue;
-				
-				if (BoardMap.Find(Row->ChessLocation) && Row->ChessActor)
+				if (!Row || !Row->ChessActor)
 				{
-					const FRotator SpawnRotation = FRotator::ZeroRotator;
-					AChessPoint* Point = World->SpawnActor<AChessPoint>(Row->ChessActor,BoardMap.Find(Row->ChessLocation)->Get()->GetActorLocation(),SpawnRotation,SpawnParams);
-					if (!Point)
-					{
-						UE_LOG(LogTemp, Warning, TEXT("Can't SpawnChessPoint"));
-					}
+					continue;
 				}
+
+				const TObjectPtr<AChessBoard>* Board = BoardMap.Find(Row->ChessLocation);
+				if (!Board || !Board->Get())
+				{
+					continue;
+				}
+
+				const FTransform SpawnTransform(FRotator::ZeroRotator, Board->Get()->GetActorLocation());
+				AChessPoint* Point = World->SpawnActorDeferred<AChessPoint>(
+					Row->ChessActor,
+					SpawnTransform,
+					this,
+					nullptr,
+					ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+				if (!Point)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("Can't SpawnChessPoint"));
+					continue;
+				}
+
+				if (Row->MoveRule)
+				{
+					Point->SetChessMoveRule(Row->MoveRule->GetDefaultObject());
+				}
+				else
+				{
+					UE_LOG(LogTemp, Warning, TEXT("Can't MoveRule for %s"), *Row->ChessActor->GetName());
+				}
+
+				UGameplayStatics::FinishSpawningActor(Point, SpawnTransform);
 			}
 		}
 	}

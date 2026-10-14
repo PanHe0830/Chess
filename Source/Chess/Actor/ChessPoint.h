@@ -32,6 +32,7 @@ public:
 	
 protected:
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 private:
 	UPROPERTY(EditAnywhere, Category = ChessPoint)
@@ -64,4 +65,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Ability System")
 	void GiveAbility(TSubclassOf<UGameplayAbility> Ability);
 	// ====================================GAS====================================
+	
+	void SetChessMoveRule(UObject* InMoveRule);
+private:
+	UPROPERTY(VisibleAnywhere, Category = "Rule|Move")
+	TObjectPtr<UObject> MoveRule;
 };
