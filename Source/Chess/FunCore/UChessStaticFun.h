@@ -15,4 +15,5 @@ public:
 	
 	static void PrintStringMessage(FString message);
 	static bool IsStraightLine(const FVector2D& From, const FVector2D& To);
+	static bool HasPieceOnPath(const FVector2D& From, const FVector2D& To, const TArray<FVector2D>& OccupiedCells);
 };

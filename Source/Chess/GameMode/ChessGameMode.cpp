@@ -37,6 +37,7 @@ void AChessGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
 		}
 		BoardMap.Empty();
 	}
+	PieceMap.Empty();
 }
 
 void AChessGameMode::PostLogin(APlayerController* NewPlayer)
@@ -191,6 +192,7 @@ void AChessGameMode::SetChessPoint()
 				}
 
 				Point->SetBoardPoint(Row->ChessLocation);
+				RegisterChessPoint(Point);
 
 				if (Row->MoveRule)
 				{
@@ -205,6 +207,51 @@ void AChessGameMode::SetChessPoint()
 			}
 		}
 	}
+}
+
+void AChessGameMode::RegisterChessPoint(AChessPoint* Point)
+{
+	if (!Point)
+	{
+		return;
+	}
+
+	PieceMap.Add(Point->GetBoardPoint(), Point);
+}
+
+void AChessGameMode::UpdateChessPointPosition(AChessPoint* Point, const FVector2D& NewPoint)
+{
+	if (!Point)
+	{
+		return;
+	}
+
+	RemoveChessPoint(Point);
+	Point->SetBoardPoint(NewPoint);
+	PieceMap.Add(NewPoint, Point);
+}
+
+void AChessGameMode::RemoveChessPoint(AChessPoint* Point)
+{
+	if (!Point)
+	{
+		return;
+	}
+
+	for (auto It = PieceMap.CreateIterator(); It; ++It)
+	{
+		if (It.Value() == Point)
+		{
+			It.RemoveCurrent();
+		}
+	}
+}
+
+TArray<FVector2D> AChessGameMode::GetOccupiedCells() const
+{
+	TArray<FVector2D> Cells;
+	PieceMap.GenerateKeyArray(Cells);
+	return Cells;
 }
 
 void AChessGameMode::NotifyPlayerReady()

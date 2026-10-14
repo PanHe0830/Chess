@@ -3,16 +3,17 @@
 
 #include "ChessMoveCar.h"
 
-bool UChessMoveCar::IsMoveLegal(EChessCamp Camp, const FVector2D& From, const FVector2D& To) const
+#include "Chess/FunCore/UChessStaticFun.h"
+
+bool UChessMoveCar::IsMoveLegal(EChessCamp Camp, const FVector2D& From, const FVector2D& To, const TArray<FVector2D>& OccupiedCells) const
 {
-	// 车走直线 , 如果X和Y都不是0证明没走直线
 	const int32 DeltaX = FMath::Abs(FMath::RoundToInt(To.X - From.X));
 	const int32 DeltaY = FMath::Abs(FMath::RoundToInt(To.Y - From.Y));
-	
-	if (DeltaX != 0 && DeltaY != 0)
+	const bool bStraight = (DeltaX == 0) != (DeltaY == 0);
+	if (!bStraight)
 	{
 		return false;
 	}
-	
-	return true;;
+
+	return !UChessStaticFun::HasPieceOnPath(From, To, OccupiedCells);
 }

@@ -7,6 +7,7 @@
 #include "ChessGameMode.generated.h"
 
 class AChessBoard;
+class AChessPoint;
 /**
  * 
  */
@@ -37,6 +38,10 @@ private:
 	int32 AssignedPlayerCount = 0;
 public:
 	void NotifyPlayerReady();
+	void RegisterChessPoint(AChessPoint* Point);
+	void UpdateChessPointPosition(AChessPoint* Point, const FVector2D& NewPoint);
+	void RemoveChessPoint(AChessPoint* Point);
+	TArray<FVector2D> GetOccupiedCells() const;
 	UPROPERTY(EditAnywhere , Category = "Chess")
 	TSubclassOf<AChessBoard> ChessBoardClass;
 	UPROPERTY(EditAnywhere , Category = "Chess")
@@ -53,6 +58,9 @@ public:
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Chess")
 	TMap<FVector2D , TObjectPtr<AChessBoard>> BoardMap;
+
+	UPROPERTY(VisibleAnywhere, Category = "Chess")
+	TMap<FVector2D, TObjectPtr<AChessPoint>> PieceMap;
 	
 	FTimerHandle TimerHandle;
 };

@@ -6,6 +6,7 @@
 #include "Components/StaticMeshComponent.h"
 #include "AbilitySystemComponent.h"
 #include "Chess/GAS/ChessAttributeSet.h"
+#include "Chess/GameMode/ChessGameMode.h"
 #include "Net/UnrealNetwork.h"
 
 AChessPoint::AChessPoint()
@@ -106,6 +107,14 @@ void AChessPoint::BeginPlay()
 
 void AChessPoint::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
+	if (UWorld* World = GetWorld())
+	{
+		if (AChessGameMode* ChessGameMode = World->GetAuthGameMode<AChessGameMode>())
+		{
+			ChessGameMode->RemoveChessPoint(this);
+		}
+	}
+
 	Super::EndPlay(EndPlayReason);
 	
 	if (IsValid(MoveRule) && !MoveRule->HasAnyFlags(RF_ClassDefaultObject))
