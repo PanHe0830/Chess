@@ -3,3 +3,7 @@
 
 #include "ChessMoveCannon.h"
 
+bool UChessMoveCannon::IsMoveLegal(EChessCamp Camp, const FVector2D& From, const FVector2D& To) const
+{
+	return false;
+}

@@ -14,4 +14,5 @@ public:
 	~UChessStaticFun() = delete;
 	
 	static void PrintStringMessage(FString message);
+	static bool IsStraightLine(const FVector2D& From, const FVector2D& To);
 };

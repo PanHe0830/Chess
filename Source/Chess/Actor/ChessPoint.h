@@ -29,6 +29,10 @@ public:
 	bool IsSelected() const { return bIsSelected; }
 	EChessCamp GetChessCamp() const { return ChessCamp; }
 	FVector GetLogicalLocation() const;
+	void SetBoardPoint(const FVector2D& InBoardPoint);
+	FVector2D GetBoardPoint() const;
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	
 protected:
 	virtual void BeginPlay() override;
@@ -43,6 +47,9 @@ private:
 	
 	UPROPERTY(EditAnywhere, Category = ChessPoint)
 	EChessCamp ChessCamp = EChessCamp::ECT_MAX;
+
+	UPROPERTY(Replicated, VisibleAnywhere, Category = ChessPoint)
+	FVector2D BoardPoint = FVector2D::ZeroVector;
 
 	UPROPERTY(EditAnywhere, Category = ChessPoint)
 	float SelectHeight = 50.f;

@@ -6,6 +6,7 @@
 #include "Components/StaticMeshComponent.h"
 #include "AbilitySystemComponent.h"
 #include "Chess/GAS/ChessAttributeSet.h"
+#include "Net/UnrealNetwork.h"
 
 AChessPoint::AChessPoint()
 {
@@ -61,6 +62,23 @@ FVector AChessPoint::GetLogicalLocation() const
 		Location.Z -= SelectHeight;
 	}
 	return Location;
+}
+
+void AChessPoint::SetBoardPoint(const FVector2D& InBoardPoint)
+{
+	BoardPoint = InBoardPoint;
+}
+
+FVector2D AChessPoint::GetBoardPoint() const
+{
+	return BoardPoint;
+}
+
+void AChessPoint::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AChessPoint, BoardPoint);
 }
 
 void AChessPoint::BeginPlay()

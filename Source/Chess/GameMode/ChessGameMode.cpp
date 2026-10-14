@@ -190,6 +190,8 @@ void AChessGameMode::SetChessPoint()
 					continue;
 				}
 
+				Point->SetBoardPoint(Row->ChessLocation);
+
 				if (Row->MoveRule)
 				{
 					Point->SetChessMoveRule(Row->MoveRule->GetDefaultObject());
