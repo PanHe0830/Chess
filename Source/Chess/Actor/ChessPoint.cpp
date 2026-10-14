@@ -88,21 +88,15 @@ void AChessPoint::BeginPlay()
 	
 	GameAbilitySystemComponent->InitAbilityActorInfo(this, this);
 
-	if (!MoveAbility)
+	if (!HasAuthority())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("%s MoveAbility is not set."), *GetName());
 		return;
 	}
 
-	if (!HasAuthority())
+	for (const TSubclassOf<UGameplayAbility>& AbilityClass : Abilities)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("%s Clients not Authority ."), *GetName());
-		return;
+		GiveAbility(AbilityClass);
 	}
-	
-	// 只授予能力，等待 GameplayEvent 触发激活
-	const FGameplayAbilitySpec MoveSpec = GameAbilitySystemComponent->BuildAbilitySpecFromClass(MoveAbility, 1, -1);
-	GameAbilitySystemComponent->GiveAbility(MoveSpec);
 }
 
 void AChessPoint::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -144,5 +138,10 @@ void AChessPoint::GiveAbility(TSubclassOf<UGameplayAbility> Ability)
 void AChessPoint::SetChessMoveRule(UObject* InMoveRule)
 {
 	MoveRule = InMoveRule;
+}
+
+void AChessPoint::SetAbilities(const TArray<TSubclassOf<UGameplayAbility>>& InAbilities)
+{
+	Abilities = InAbilities;
 }
 

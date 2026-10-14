@@ -66,15 +66,16 @@ public:
 	UPROPERTY(EditAnywhere, Category = ChessPoint)
 	UChessAttributeSet* AttributeSet;
 	
-	UPROPERTY(EditAnywhere, Category = ChessPoint)
-	TSubclassOf<UGameplayAbility> MoveAbility;
-	
 	UFUNCTION(BlueprintCallable, Category="Ability System")
 	void GiveAbility(TSubclassOf<UGameplayAbility> Ability);
 	// ====================================GAS====================================
 	
 	void SetChessMoveRule(UObject* InMoveRule);
+	void SetAbilities(const TArray<TSubclassOf<UGameplayAbility>>& InAbilities);
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Rule|Move")
 	TObjectPtr<UObject> MoveRule;
+
+	UPROPERTY()
+	TArray<TSubclassOf<UGameplayAbility>> Abilities;
 };
