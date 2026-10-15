@@ -6,6 +6,7 @@
 AChessBoard::AChessBoard()
 {
 	PrimaryActorTick.bCanEverTick = true;
+	bReplicates = true;
 	BoardPoint = FVector2D(0,0);
 }
 
