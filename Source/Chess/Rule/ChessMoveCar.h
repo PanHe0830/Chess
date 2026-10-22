@@ -3,15 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ChessMoveBase.h"
 #include "Chess/Chess.h"
-#include "UObject/Object.h"
 #include "ChessMoveCar.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class CHESS_API UChessMoveCar : public UObject
+class CHESS_API UChessMoveCar : public UChessMoveBase
 {
 	GENERATED_BODY()
 public:

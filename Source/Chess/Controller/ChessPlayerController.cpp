@@ -201,6 +201,11 @@ void AChessPlayerController::ServerRequestChessMove_Implementation(class AChessP
 	LocData->TargetLocation.LocationType = EGameplayAbilityTargetingLocationType::LiteralTransform;
 	LocData->TargetLocation.LiteralTransform = FTransform(TargetLocation);
 	EventData.TargetData = FGameplayAbilityTargetDataHandle(LocData);
+	
+	UObject* MoveRule = Piece->GetChessMoveRule();
+	if (!MoveRule) return;
+	
+	
 
 	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
 		Piece,

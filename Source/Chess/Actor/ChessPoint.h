@@ -8,6 +8,7 @@
 #include "GameFramework/Actor.h"
 #include "ChessPoint.generated.h"
 
+class UChessMoveBase;
 class UGameplayAbility;
 class UAbilitySystemComponent;
 class UChessAttributeSet;
@@ -72,9 +73,10 @@ public:
 	
 	void SetChessMoveRule(UObject* InMoveRule);
 	void SetAbilities(const TArray<TSubclassOf<UGameplayAbility>>& InAbilities);
+	UChessMoveBase* GetChessMoveRule() const { return MoveRule; }
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Rule|Move")
-	TObjectPtr<UObject> MoveRule;
+	TObjectPtr<UChessMoveBase> MoveRule;
 
 	UPROPERTY()
 	TArray<TSubclassOf<UGameplayAbility>> Abilities;
