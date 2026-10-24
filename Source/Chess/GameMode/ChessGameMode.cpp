@@ -193,6 +193,8 @@ void AChessGameMode::SetChessPoint()
 
 				Point->SetBoardPoint(Row->ChessLocation);
 				Point->SetAbilities(Row->Abilities);
+				Point->SetChessCamp(Row->ChessCamp);
+				Point->SetChessType(Row->ChessType);
 				RegisterChessPoint(Point);
 
 				if (Row->MoveRule)

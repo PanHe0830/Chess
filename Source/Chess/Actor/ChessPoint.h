@@ -73,6 +73,8 @@ public:
 	
 	void SetChessMoveRule(UObject* InMoveRule);
 	void SetAbilities(const TArray<TSubclassOf<UGameplayAbility>>& InAbilities);
+	void SetChessCamp(EChessCamp InChessCamp);
+	void SetChessType(EChessType InChessType);
 	UChessMoveBase* GetChessMoveRule() const { return MoveRule; }
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Rule|Move")

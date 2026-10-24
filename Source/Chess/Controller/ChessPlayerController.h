@@ -39,7 +39,7 @@ public:
 	TObjectPtr<UInputAction> MouseRightDown;
 	
 	UFUNCTION(Server, Reliable)
-	void ServerRequestChessMove(class AChessPoint* Piece, FVector_NetQuantize TargetLocation);
+	void ServerRequestChessMove(class AChessPoint* Piece, FVector_NetQuantize TargetLocation,FVector2D Targert);
 
 	UFUNCTION(Server, Reliable)
 	void ServerNotifyReady();

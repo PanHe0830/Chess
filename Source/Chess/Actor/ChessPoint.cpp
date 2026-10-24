@@ -7,6 +7,7 @@
 #include "AbilitySystemComponent.h"
 #include "Chess/GAS/ChessAttributeSet.h"
 #include "Chess/GameMode/ChessGameMode.h"
+#include "Chess/Rule/ChessMoveBase.h"
 #include "Net/UnrealNetwork.h"
 
 AChessPoint::AChessPoint()
@@ -137,11 +138,21 @@ void AChessPoint::GiveAbility(TSubclassOf<UGameplayAbility> Ability)
 
 void AChessPoint::SetChessMoveRule(UObject* InMoveRule)
 {
-	MoveRule = InMoveRule;
+	MoveRule = Cast<UChessMoveBase>(InMoveRule);
 }
 
 void AChessPoint::SetAbilities(const TArray<TSubclassOf<UGameplayAbility>>& InAbilities)
 {
 	Abilities = InAbilities;
+}
+
+void AChessPoint::SetChessCamp(EChessCamp InChessCamp)
+{
+	ChessCamp = InChessCamp;
+}
+
+void AChessPoint::SetChessType(EChessType InChessType)
+{
+	ChessType = InChessType;
 }
 

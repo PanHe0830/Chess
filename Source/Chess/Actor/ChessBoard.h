@@ -26,4 +26,7 @@ protected:
 private:
 	UPROPERTY(EditAnywhere , Category = "ChessBoard")
 	FVector2D BoardPoint;
+	
+	UPROPERTY(EditAnywhere, Category = ChessPoint)
+	UStaticMeshComponent* StaticMesh;
 };

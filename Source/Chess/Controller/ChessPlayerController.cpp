@@ -14,16 +14,33 @@
 #include "Chess/Actor/ChessPoint.h"
 #include "Chess/GameMode/ChessGameMode.h"
 #include "Chess/PlayerState/ChessPlayerState.h"
+#include "Chess/Rule/ChessMoveBase.h"
 #include "Chess/SubSystem/ChessManagerSubsystem.h"
 #include "Chess/UI/MainWidget.h"
 #include "Components/TextBlock.h"
+#include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 
 void AChessPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	SetShowMouseCursor(true);
+	
+	//if (IsLocalController())
+	//{
+	//	bShowMouseCursor = true;
+	//	bEnableClickEvents = true;
+	//	bEnableMouseOverEvents = true;
+	//
+	//	FInputModeGameAndUI InputMode;
+	//	InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+	//	InputMode.SetHideCursorDuringCapture(false);
+	//	SetInputMode(InputMode);
+	//
+	//	// 点选棋子时不要把鼠标位移当成视角输入，避免画面微抖
+	//	SetIgnoreLookInput(true);
+	//}
 }
 
 void AChessPlayerController::AcknowledgePossession(APawn* P)
@@ -34,6 +51,11 @@ void AChessPlayerController::AcknowledgePossession(APawn* P)
 	{
 		P->SetActorHiddenInGame(true);
 	}
+
+	//if (IsLocalController())
+	//{
+	//	SetIgnoreLookInput(true);
+	//}
 
 	ApplyStartViewRotation();
 }
@@ -108,6 +130,7 @@ void AChessPlayerController::MouseLeftButtonClicked(const FInputActionValue& Val
 	}
 	
 	AChessPoint* HitPiece = Cast<AChessPoint>(Hit.GetActor());
+	AChessBoard* HitBoard = Cast<AChessBoard>(Hit.GetActor());
 	AChessPoint* SelectedPiece = Cast<AChessPoint>(ChessManager->GetCurrentSelectedActor());
 	
 	if (HitPiece)
@@ -120,9 +143,9 @@ void AChessPlayerController::MouseLeftButtonClicked(const FInputActionValue& Val
 	
 		if (bCanCapture)
 		{
-			const FVector TargetLocation = HitPiece->GetLogicalLocation();
+			const FVector2D Target = HitPiece->GetBoardPoint();
 			ChessManager->SetCurrentSelectedActor(nullptr);
-			ServerRequestChessMove(SelectedPiece, TargetLocation);
+			ServerRequestChessMove(SelectedPiece,HitPiece->GetActorLocation(), Target);
 			return;
 		}
 	
@@ -130,7 +153,7 @@ void AChessPlayerController::MouseLeftButtonClicked(const FInputActionValue& Val
 		return;
 	}
 	
-	if (!SelectedPiece)
+	if (!SelectedPiece || !HitBoard)
 	{
 		return;
 	}
@@ -146,7 +169,7 @@ void AChessPlayerController::MouseLeftButtonClicked(const FInputActionValue& Val
 		TargetLocation.Y = BoardLocation.Y;
 	}
 	
-	ServerRequestChessMove(SelectedPiece, TargetLocation);
+	ServerRequestChessMove(SelectedPiece, TargetLocation,HitBoard->GetBoardPoint());
 }
 
 void AChessPlayerController::MouseRightButtonClicked(const FInputActionValue& Value)
@@ -190,7 +213,7 @@ void AChessPlayerController::ClientCloseReadyWidget_Implementation()
 	}
 }
 
-void AChessPlayerController::ServerRequestChessMove_Implementation(class AChessPoint* Piece, FVector_NetQuantize TargetLocation)
+void AChessPlayerController::ServerRequestChessMove_Implementation(class AChessPoint* Piece, FVector_NetQuantize TargetLocation,FVector2D Targert)
 {
 	FGameplayEventData EventData;
 	EventData.EventTag = ChessGameplayTags::Chess_Move;
@@ -202,11 +225,16 @@ void AChessPlayerController::ServerRequestChessMove_Implementation(class AChessP
 	LocData->TargetLocation.LiteralTransform = FTransform(TargetLocation);
 	EventData.TargetData = FGameplayAbilityTargetDataHandle(LocData);
 	
-	UObject* MoveRule = Piece->GetChessMoveRule();
-	if (!MoveRule) return;
-	
-	
+	UChessMoveBase* MoveRule = Piece->GetChessMoveRule();
+	AChessGameMode* GM = Cast<AChessGameMode>(UGameplayStatics::GetGameMode(this));
+	if (!MoveRule || !GM) return;
+	if (!MoveRule->IsMoveLegal(Piece->GetChessCamp(),Piece->GetBoardPoint(), Targert,GM->GetOccupiedCells()))
+	{
+		return;	
+	}
 
+	GM->UpdateChessPointPosition(Piece,Targert);
+	
 	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
 		Piece,
 		ChessGameplayTags::Chess_Move,

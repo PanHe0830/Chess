@@ -8,6 +8,8 @@ AChessBoard::AChessBoard()
 	PrimaryActorTick.bCanEverTick = true;
 	bReplicates = true;
 	BoardPoint = FVector2D(0,0);
+	
+	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(FName("StaticMesh"));
 }
 
 void AChessBoard::Tick(float DeltaTime)

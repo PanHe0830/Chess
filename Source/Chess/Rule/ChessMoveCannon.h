@@ -15,5 +15,6 @@ class CHESS_API UChessMoveCannon : public UChessMoveBase
 {
 	GENERATED_BODY()
 public:
-	virtual bool IsMoveLegal(EChessCamp Camp , const FVector2D& From, const FVector2D& To) const override;
+	virtual bool IsMoveLegal(EChessCamp Camp, const FVector2D& From, const FVector2D& To,
+		const TArray<FVector2D>& OccupiedCells) const override;
 };

@@ -3,7 +3,11 @@
 
 #include "ChessMoveSoldier.h"
 
-bool UChessMoveSoldier::IsMoveLegal(EChessCamp Camp, const FVector2D& From, const FVector2D& To) const
+#include "Chess/FunCore/UChessStaticFun.h"
+
+bool UChessMoveSoldier::IsMoveLegal(EChessCamp Camp, const FVector2D& From, const FVector2D& To,
+	const TArray<FVector2D>& /*OccupiedCells*/) const
 {
-	return false;
+	// 兵/卒不需要路径判断，直接复用通用走法：未过河只能前进，过河后可横走一步
+	return UChessStaticFun::IsPawnMove(Camp, From, To);
 }
