@@ -9,4 +9,6 @@ namespace ChessGameplayTags
 	CHESS_API FGameplayTag FindTagByString(const FString& TagString, bool bMatchPartialString);
 	
 	CHESS_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Chess_Move);
+	CHESS_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Chess_Attack);
+	CHESS_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Chess_Defense);
 }

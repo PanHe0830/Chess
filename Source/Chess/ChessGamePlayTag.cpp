@@ -33,5 +33,7 @@ namespace ChessGameplayTags
 	}
 	
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Chess_Move, "Ability.Chess.Move", "Chess Move.");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Chess_Attack, "Ability.Chess.Attack", "Chess Attack.");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Chess_Defense, "Ability.Chess.Defense", "Chess Defense.");
 	
 }
