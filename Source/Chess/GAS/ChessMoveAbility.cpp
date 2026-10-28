@@ -3,6 +3,7 @@
 
 #include "ChessMoveAbility.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
 #include "Abilities/GameplayAbilityTargetTypes.h"
 #include "Chess/ChessGamePlayTag.h"
 #include "GameFramework/Actor.h"

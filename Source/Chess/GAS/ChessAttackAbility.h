@@ -13,6 +13,8 @@ UCLASS()
 class CHESS_API UChessAttackAbility : public UGameplayAbility
 {
 	GENERATED_BODY()
+	
+	UChessAttackAbility();
 protected:
 	virtual void ActivateAbility(
 		const FGameplayAbilitySpecHandle Handle, 

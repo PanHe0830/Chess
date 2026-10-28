@@ -239,6 +239,15 @@ void AChessPlayerController::ServerRequestChessMove_Implementation(class AChessP
 		Piece,
 		ChessGameplayTags::Chess_Move,
 		EventData);
+	
+	FGameplayEventData AttackEvent;
+	AttackEvent.EventTag = ChessGameplayTags::Chess_Attack;
+	AttackEvent.Instigator = Piece;
+	AttackEvent.Target = Piece;
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
+		Piece, 
+		ChessGameplayTags::Chess_Attack, 
+		AttackEvent);
 
 	UE_LOG(LogTemp, Warning, TEXT("Request move %s to %s (from %s)"),
 		*Piece->GetName(),

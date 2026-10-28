@@ -33,6 +33,9 @@ struct FChessPointConfig : public FTableRowBase
 	UPROPERTY(EditAnywhere, Category = Chess , DisplayName = "棋子移动规则配置")
 	TSubclassOf<UObject> MoveRule;
 	
+	UPROPERTY(EditAnywhere, Category = Chess , DisplayName = "棋子攻击规则配置")
+	TSubclassOf<UObject> AttackRule;
+	
 	UPROPERTY(EditAnywhere, Category = Chess, DisplayName = "棋子技能")
 	TArray<TSubclassOf<UGameplayAbility>> Abilities;
 };

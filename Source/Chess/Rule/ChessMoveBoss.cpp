@@ -2,7 +2,7 @@
 
 
 #include "ChessMoveBoss.h"
-PRAGMA_DISABLE_OPTIMIZATION
+
 bool UChessMoveBoss::IsMoveLegal(EChessCamp Camp, const FVector2D& From, const FVector2D& To,
 	const TArray<FVector2D>& /*OccupiedCells*/) const
 {
@@ -28,4 +28,3 @@ bool UChessMoveBoss::IsMoveLegal(EChessCamp Camp, const FVector2D& From, const F
 
 	return bInsidePalaceX && bInsidePalaceY;
 }
-PRAGMA_ENABLE_OPTIMIZATION

@@ -3,6 +3,7 @@
 
 #include "ChessGameMode.h"
 
+#include "INodeAndChannelMappings.h"
 #include "Chess/Actor/ChessBoard.h"
 #include "Chess/Actor/ChessPoint.h"
 #include "Chess/Controller/ChessPlayerController.h"
@@ -248,6 +249,11 @@ void AChessGameMode::RemoveChessPoint(AChessPoint* Point)
 			It.RemoveCurrent();
 		}
 	}
+}
+
+TObjectPtr<AChessPoint> AChessGameMode::GetPieceAt(FVector2D Location)
+{
+	return PieceMap[Location];
 }
 
 TArray<FVector2D> AChessGameMode::GetOccupiedCells() const
