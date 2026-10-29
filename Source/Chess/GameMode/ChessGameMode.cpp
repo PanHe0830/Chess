@@ -196,16 +196,9 @@ void AChessGameMode::SetChessPoint()
 				Point->SetAbilities(Row->Abilities);
 				Point->SetChessCamp(Row->ChessCamp);
 				Point->SetChessType(Row->ChessType);
+				Point->SetChessMoveRule(Row->MoveRule->GetDefaultObject());
+				Point->SetChessAttackRule(Row->AttackRule->GetDefaultObject());
 				RegisterChessPoint(Point);
-
-				if (Row->MoveRule)
-				{
-					Point->SetChessMoveRule(Row->MoveRule->GetDefaultObject());
-				}
-				else
-				{
-					UE_LOG(LogTemp, Warning, TEXT("Can't MoveRule for %s"), *Row->ChessActor->GetName());
-				}
 
 				UGameplayStatics::FinishSpawningActor(Point, SpawnTransform);
 			}

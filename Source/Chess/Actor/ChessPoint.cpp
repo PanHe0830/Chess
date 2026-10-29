@@ -7,6 +7,7 @@
 #include "AbilitySystemComponent.h"
 #include "Chess/GAS/ChessAttributeSet.h"
 #include "Chess/GameMode/ChessGameMode.h"
+#include "Chess/Rule/ChessAttackRule.h"
 #include "Chess/Rule/ChessMoveBase.h"
 #include "Net/UnrealNetwork.h"
 
@@ -69,11 +70,6 @@ FVector AChessPoint::GetLogicalLocation() const
 void AChessPoint::SetBoardPoint(const FVector2D& InBoardPoint)
 {
 	BoardPoint = InBoardPoint;
-}
-
-FVector2D AChessPoint::GetBoardPoint() const
-{
-	return BoardPoint;
 }
 
 void AChessPoint::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -154,5 +150,10 @@ void AChessPoint::SetChessCamp(EChessCamp InChessCamp)
 void AChessPoint::SetChessType(EChessType InChessType)
 {
 	ChessType = InChessType;
+}
+
+void AChessPoint::SetChessAttackRule(UObject* InMoveRule)
+{
+	AttackRule = Cast<UChessAttackRule>(InMoveRule);
 }
 
