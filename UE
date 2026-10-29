@@ -1,0 +1,50 @@
+he.pan
+125801Ph!20260518
+panhe123456
+
+代码优化
+PRAGMA_DISABLE_OPTIMIZATION
+PRAGMA_ENABLE_OPTIMIZATION
+
+项目管理
+UGS Unreal Game Sync
+
+UE游戏本地化
+String Table -- UE官方文档的流程
+本地化控制面板 -- UE官方文档的流程
+
+类
+UDeveloperSettings
+
+UE
+TFunction TFunctionRef Delegate
+
+如何隐藏ListView/TitleView右侧的滚动条
+SetScrollbarVisibility(ESlateVisibility::Collapsed);
+
+如何获得默认的导航类并禁止导航
+if (FSlateApplication::IsInitialized())
+{
+  TSharedRef<FNavigationConfig> Nav = FSlateApplication::Get().GetNavigationConfig();
+  Nav->bKeyNavigation = false;
+  FSlateApplication::Get().SetNavigationConfig(Nav);
+}
+
+3D模型生成2D图片
+USceneCaptureComponent2D 组件
+
+UCommonListView中 OnItemSelectionChanged 和 OnItemClicked
+OnItemSelectionChanged 会在焦点聚焦到控件时触发 OnItemClicked 不会
+
+IInputProcessor 用于在游戏和UI之前捕获输入 true代表吃掉当前输入不继续走 false 代表不吃掉可以被让输入被其他地方捕获
+
+GetDesiredInputConfig
+
+UWidgetLayoutLibrary 
+
+跨模块通知解耦 GameplayMessageRouter 在Lyra项目中 非官方独立插件
+
+蓝图中什么时Native父类
+从父类链上往上找第一个使用C++实现的类就是Native父类
+
+GetDefaultObject和NewObject
