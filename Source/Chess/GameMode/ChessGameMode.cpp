@@ -246,7 +246,11 @@ void AChessGameMode::RemoveChessPoint(AChessPoint* Point)
 
 TObjectPtr<AChessPoint> AChessGameMode::GetPieceAt(FVector2D Location)
 {
-	return PieceMap[Location];
+	if (const TObjectPtr<AChessPoint>* Found = PieceMap.Find(Location))
+	{
+		return *Found;
+	}
+	return nullptr;
 }
 
 TArray<FVector2D> AChessGameMode::GetOccupiedCells() const

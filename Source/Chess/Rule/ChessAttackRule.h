@@ -18,4 +18,7 @@ class CHESS_API UChessAttackRule : public UObject
 	GENERATED_BODY()
 public:
 	virtual void CollectTargets(AChessPoint* CurrentActor,AChessGameMode* Board,TArray<AChessPoint*>& OutTargets) const;
+	
+private:
+	virtual void CollectCarTargets(AChessPoint* CurrentActor,AChessGameMode* Board,TArray<AChessPoint*>& OutTargets) const;
 };

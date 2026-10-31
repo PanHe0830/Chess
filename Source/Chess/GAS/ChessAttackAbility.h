@@ -29,4 +29,8 @@ protected:
 		bool bReplicateEndAbility,
 		bool bWasCancelled
 	) override;
+	
+public:
+	UPROPERTY(EditAnywhere , BlueprintReadOnly, Category = "Abilities")
+	TSubclassOf<class UAttackEffect> AttackEffect;
 };

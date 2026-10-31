@@ -3,10 +3,12 @@
 
 #include "ChessAttackAbility.h"
 
+#include "AbilitySystemComponent.h"
 #include "Chess/Actor/ChessPoint.h"
 #include "Chess/ChessGamePlayTag.h"
 #include "Chess/GameMode/ChessGameMode.h"
 #include "Chess/Rule/ChessAttackRule.h"
+#include "Effect/AttackEffect.h"
 
 UChessAttackAbility::UChessAttackAbility()
 {
@@ -41,8 +43,27 @@ void UChessAttackAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handl
 		return;
 	}
 
+	// 收集攻击目标
 	TArray<AChessPoint*> Targets;
 	Rule->CollectTargets(Piece, GameMode, Targets);
+	
+	if (!AttackEffect)
+	{
+		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
+		return;
+	}
+	
+	for (AChessPoint* Target : Targets)
+	{
+		if (!IsValid(Target)) continue;
+		UAbilitySystemComponent* TargetASC = Target->GetAbilitySystemComponent();
+		if (!TargetASC) continue;
+		FGameplayEffectSpecHandle SpecHandle = MakeOutgoingGameplayEffectSpec(AttackEffect, GetAbilityLevel(Handle, ActorInfo));
+		if (SpecHandle.IsValid())
+		{
+			TargetASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+		}
+	}
 
 	UE_LOG(LogTemp, Warning, TEXT("UChessAttackAbility::ActivateAbility targets=%d"), Targets.Num());
 	EndAbility(Handle, ActorInfo, ActivationInfo, true, false);

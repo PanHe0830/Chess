@@ -59,5 +59,22 @@ void UChessMoveAbility::ActivateAbility(
 void UChessMoveAbility::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
 	const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
+	AActor* Avatar = ActorInfo ? ActorInfo->AvatarActor.Get() : nullptr;
+
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
+
+	// 移动被取消/失败时不接攻击
+	if (bWasCancelled || !Avatar)
+	{
+		return;
+	}
+	
+	FGameplayEventData AttackEvent;
+	AttackEvent.EventTag = ChessGameplayTags::Chess_Attack;
+	AttackEvent.Instigator = Avatar;
+	AttackEvent.Target = Avatar;
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
+		Avatar,
+		ChessGameplayTags::Chess_Attack,
+		AttackEvent);
 }
