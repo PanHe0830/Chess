@@ -260,6 +260,11 @@ TArray<FVector2D> AChessGameMode::GetOccupiedCells() const
 	return Cells;
 }
 
+TMap<FVector2D, TObjectPtr<AChessPoint>> AChessGameMode::GetOccupiedPoints() const
+{
+	return PieceMap;
+}
+
 void AChessGameMode::NotifyPlayerReady()
 {
 	if (bMatchStarted)

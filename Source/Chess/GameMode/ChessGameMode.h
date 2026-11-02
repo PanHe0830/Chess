@@ -43,6 +43,7 @@ public:
 	void RemoveChessPoint(AChessPoint* Point);
 	TObjectPtr<AChessPoint> GetPieceAt(FVector2D Location);
 	TArray<FVector2D> GetOccupiedCells() const;
+	TMap<FVector2D, TObjectPtr<AChessPoint>> GetOccupiedPoints() const;
 	UPROPERTY(EditAnywhere , Category = "Chess")
 	TSubclassOf<AChessBoard> ChessBoardClass;
 	UPROPERTY(EditAnywhere , Category = "Chess")

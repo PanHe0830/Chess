@@ -36,7 +36,9 @@ public:
 	FVector GetLogicalLocation() const;
 	void SetBoardPoint(const FVector2D& InBoardPoint);
 	bool IsActorSelected() const { return bIsSelected; }
-	FVector2D GetBoardPoint() const {return BoardPoint;};
+	FVector2D GetBoardPoint() const { return BoardPoint; }
+	/** 上一次 BoardPoint（移动前格子），用于攻击朝向 */
+	FVector2D GetLastBoardPoint() const { return LastBoardPoint; }
 	UChessMoveBase* GetChessMoveRule() const { return MoveRule; }
 	UChessAttackRule* GetChessAttackRule() const { return AttackRule; }
 	EChessType GetChessType() const { return ChessType; }
@@ -66,6 +68,9 @@ private:
 
 	UPROPERTY(Replicated, VisibleAnywhere, Category = ChessPoint)
 	FVector2D BoardPoint = FVector2D::ZeroVector;
+
+	UPROPERTY(VisibleAnywhere, Category = ChessPoint)
+	FVector2D LastBoardPoint = FVector2D::ZeroVector;
 
 	UPROPERTY(EditAnywhere, Category = ChessPoint)
 	float SelectHeight = 50.f;

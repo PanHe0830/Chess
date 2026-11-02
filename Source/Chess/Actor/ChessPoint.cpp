@@ -69,6 +69,7 @@ FVector AChessPoint::GetLogicalLocation() const
 
 void AChessPoint::SetBoardPoint(const FVector2D& InBoardPoint)
 {
+	LastBoardPoint = BoardPoint;
 	BoardPoint = InBoardPoint;
 }
 

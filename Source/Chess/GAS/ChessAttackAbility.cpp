@@ -9,7 +9,7 @@
 #include "Chess/GameMode/ChessGameMode.h"
 #include "Chess/Rule/ChessAttackRule.h"
 #include "Effect/AttackEffect.h"
-
+PRAGMA_DISABLE_OPTIMIZATION
 UChessAttackAbility::UChessAttackAbility()
 {
 	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateYes;
@@ -37,11 +37,13 @@ void UChessAttackAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handl
 	UChessAttackRule* Rule = Piece ? Piece->GetChessAttackRule() : nullptr;
 	UWorld* World = Piece ? Piece->GetWorld() : nullptr;
 	AChessGameMode* GameMode = World ? World->GetAuthGameMode<AChessGameMode>() : nullptr;
-	if (!Piece || !Rule || !GameMode)
+	UAbilitySystemComponent* GAS = Piece->GetAbilitySystemComponent();
+	if (!Piece || !Rule || !GameMode || !GAS)
 	{
 		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
 		return;
 	}
+	
 
 	// 收集攻击目标
 	TArray<AChessPoint*> Targets;
@@ -64,8 +66,16 @@ void UChessAttackAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handl
 			TargetASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
 		}
 	}
+	
+	if (Targets.Num() > 0)
+	{
+		FGameplayEffectContextHandle Context = MakeEffectContext(Handle, ActorInfo);
+
+		GAS->ExecuteGameplayCue(ChessGameplayTags::Chess_Test,Context);
+	}
 
 	UE_LOG(LogTemp, Warning, TEXT("UChessAttackAbility::ActivateAbility targets=%d"), Targets.Num());
+	
 	EndAbility(Handle, ActorInfo, ActivationInfo, true, false);
 }
 
@@ -77,3 +87,5 @@ void UChessAttackAbility::EndAbility(const FGameplayAbilitySpecHandle Handle,
 	
 	UE_LOG(LogTemp , Warning , TEXT("UChessAttackAbility::EndAbility"));
 }
+
+PRAGMA_ENABLE_OPTIMIZATION
