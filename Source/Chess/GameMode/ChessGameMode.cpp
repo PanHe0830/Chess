@@ -228,6 +228,46 @@ void AChessGameMode::UpdateChessPointPosition(AChessPoint* Point, const FVector2
 	PieceMap.Add(NewPoint, Point);
 }
 
+bool AChessGameMode::CanBossOccupyEnemyBoss(const AChessPoint* Boss, const AChessPoint* Target) const
+{
+	if (!Boss || !Target
+		|| Boss->GetChessType() != EChessType::ECT_Boss
+		|| Target->GetChessType() != EChessType::ECT_Boss
+		|| Boss->GetChessCamp() == Target->GetChessCamp())
+	{
+		return false;
+	}
+
+	const int32 FromX = FMath::RoundToInt(Boss->GetBoardPoint().X);
+	const int32 FromY = FMath::RoundToInt(Boss->GetBoardPoint().Y);
+	const int32 ToX = FMath::RoundToInt(Target->GetBoardPoint().X);
+	const int32 ToY = FMath::RoundToInt(Target->GetBoardPoint().Y);
+
+	// 双方九宫分列左右。红方朝 X 减小的方向，蓝方朝 X 增大的方向，并且必须在同一行。
+	const int32 Forward = Boss->GetChessCamp() == EChessCamp::ECT_Red ? -1 : 1;
+	if (ToY != FromY || ToX == FromX || FMath::Sign(ToX - FromX) != Forward)
+	{
+		return false;
+	}
+
+	for (int32 X = FromX + Forward; X != ToX; X += Forward)
+	{
+		for (const TPair<FVector2D, TObjectPtr<AChessPoint>>& Pair : PieceMap)
+		{
+			if (!IsValid(Pair.Value))
+			{
+				continue;
+			}
+			if (FMath::RoundToInt(Pair.Key.X) == X && FMath::RoundToInt(Pair.Key.Y) == FromY)
+			{
+				return false;
+			}
+		}
+	}
+
+	return true;
+}
+
 void AChessGameMode::RemoveChessPoint(AChessPoint* Point)
 {
 	if (!Point)

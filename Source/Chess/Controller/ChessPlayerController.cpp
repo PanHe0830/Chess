@@ -228,9 +228,36 @@ void AChessPlayerController::ServerRequestChessMove_Implementation(class AChessP
 	UChessMoveBase* MoveRule = Piece->GetChessMoveRule();
 	AChessGameMode* GM = Cast<AChessGameMode>(UGameplayStatics::GetGameMode(this));
 	if (!MoveRule || !GM) return;
-	if (!MoveRule->IsMoveLegal(Piece->GetChessCamp(),Piece->GetBoardPoint(), Targert,GM->GetOccupiedCells()))
+
+	AChessPoint* Occupant = nullptr;
+	for (const TPair<FVector2D, TObjectPtr<AChessPoint>>& Pair : GM->GetOccupiedPoints())
 	{
-		return;	
+		if (FMath::RoundToInt(Pair.Key.X) == FMath::RoundToInt(Targert.X)
+			&& FMath::RoundToInt(Pair.Key.Y) == FMath::RoundToInt(Targert.Y))
+		{
+			Occupant = Pair.Value.Get();
+			break;
+		}
+	}
+	if (Occupant == Piece)
+	{
+		Occupant = nullptr;
+	}
+	if (Occupant && Occupant->GetChessCamp() == Piece->GetChessCamp())
+	{
+		return;
+	}
+
+	const bool bNormalMove = MoveRule->IsMoveLegal(Piece->GetChessCamp(), Piece->GetBoardPoint(), Targert, GM->GetOccupiedCells());
+	const bool bBossCapture = !bNormalMove && GM->CanBossOccupyEnemyBoss(Piece, Occupant);
+	if (!bNormalMove && !bBossCapture)
+	{
+		return;
+	}
+
+	if (Occupant)
+	{
+		Occupant->Destroy();
 	}
 
 	GM->UpdateChessPointPosition(Piece,Targert);

@@ -9,7 +9,7 @@
 #include "Chess/GameMode/ChessGameMode.h"
 #include "Chess/Rule/ChessAttackRule.h"
 #include "Effect/AttackEffect.h"
-PRAGMA_DISABLE_OPTIMIZATION
+
 UChessAttackAbility::UChessAttackAbility()
 {
 	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateYes;
@@ -87,5 +87,3 @@ void UChessAttackAbility::EndAbility(const FGameplayAbilitySpecHandle Handle,
 	
 	UE_LOG(LogTemp , Warning , TEXT("UChessAttackAbility::EndAbility"));
 }
-
-PRAGMA_ENABLE_OPTIMIZATION
