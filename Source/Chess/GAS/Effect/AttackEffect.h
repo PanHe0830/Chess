@@ -13,5 +13,4 @@ UCLASS()
 class CHESS_API UAttackEffect : public UGameplayEffect
 {
 	GENERATED_BODY()
-	
 };

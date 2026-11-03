@@ -3,3 +3,4 @@
 
 #include "AttackEffect.h"
 
+#include "Chess/GAS/ChessGamePlayEffectCalculation.h"
