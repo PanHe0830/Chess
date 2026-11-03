@@ -6,35 +6,32 @@
 #include "Chess/Chess.h"
 #include "Chess/Actor/ChessPoint.h"
 #include "Chess/GameMode/ChessGameMode.h"
-PRAGMA_DISABLE_OPTIMIZATION
+
 void UChessAttackRule::CollectTargets(AChessPoint* CurrentActor,AChessGameMode* Board,TArray<AChessPoint*>& OutTargets) const
 {
-	EChessCamp Camp = CurrentActor->GetChessCamp();
 	EChessType Type = CurrentActor->GetChessType();
-	const int32 Forward = (Camp == EChessCamp::ECT_Red) ? 1 : -1;
-	FVector2D CellPos = CurrentActor->GetBoardPoint();
 	switch (Type)
 	{
 	case EChessType::ECT_Boss:
-			
+		CollectBossTargets(CurrentActor, Board,OutTargets);
 		break;
 	case EChessType::ECT_Soldier:
-			
+		CollectSoldierTargets(CurrentActor, Board,OutTargets);
 		break;
 	case EChessType::ECT_Elephant:
-			
+		CollectElephantTargets(CurrentActor, Board,OutTargets);
 		break;
 	case EChessType::ECT_Horse:
-			
+		CollectHorseTargets(CurrentActor, Board,OutTargets);
 		break;
 	case EChessType::ECT_Car:
 		CollectCarTargets(CurrentActor, Board,OutTargets);
 		break;
 	case EChessType::ECT_Cannon:
-			
+		CollectCannonTargets(CurrentActor, Board,OutTargets);
 		break;
 	case EChessType::ECT_Obiit:
-			
+		CollectObiitTargets(CurrentActor, Board,OutTargets);
 		break;
 	default:
 		break;
@@ -71,17 +68,14 @@ void UChessAttackRule::CollectCarTargets(AChessPoint* CurrentActor, AChessGameMo
 	const int32 DirY = FMath::Sign(DeltaY);
 	constexpr int32 MaxRange = 10;
 
+	AChessPoint* FirstPiece = nullptr;
+	int32 BestDistance = MaxRange + 1;
+
 	const TMap<FVector2D, TObjectPtr<AChessPoint>> Occupied = Board->GetOccupiedPoints();
 	for (const TPair<FVector2D, TObjectPtr<AChessPoint>>& Pair : Occupied)
 	{
 		AChessPoint* Other = Pair.Value.Get();
-		if (!IsValid(Other))
-		{
-			continue;
-		}
-
-		// 排除自己与同阵营
-		if (Other == CurrentActor || Other->GetChessCamp() == Camp)
+		if (!IsValid(Other) || Other == CurrentActor)
 		{
 			continue;
 		}
@@ -91,32 +85,65 @@ void UChessAttackRule::CollectCarTargets(AChessPoint* CurrentActor, AChessGameMo
 		const int32 OffsetX = OtherX - ToX;
 		const int32 OffsetY = OtherY - ToY;
 
-		// 必须在「落点」沿移动方向的射线上，且距离 1~10 格
+		int32 Distance = 0;
 		if (DirX != 0)
 		{
 			if (OffsetY != 0 || FMath::Sign(OffsetX) != DirX)
 			{
 				continue;
 			}
-			if (FMath::Abs(OffsetX) > MaxRange)
-			{
-				continue;
-			}
+			Distance = FMath::Abs(OffsetX);
 		}
-		else // DirY != 0
+		else
 		{
 			if (OffsetX != 0 || FMath::Sign(OffsetY) != DirY)
 			{
 				continue;
 			}
-			if (FMath::Abs(OffsetY) > MaxRange)
-			{
-				continue;
-			}
+			Distance = FMath::Abs(OffsetY);
 		}
 
-		OutTargets.AddUnique(Other);
+		if (Distance < 1 || Distance > MaxRange || Distance >= BestDistance)
+		{
+			continue;
+		}
+
+		BestDistance = Distance;
+		FirstPiece = Other;
+	}
+
+	if (FirstPiece && FirstPiece->GetChessCamp() != Camp)
+	{
+		OutTargets.Add(FirstPiece);
 	}
 }
 
-PRAGMA_ENABLE_OPTIMIZATION
+void UChessAttackRule::CollectBossTargets(AChessPoint* CurrentActor, AChessGameMode* Board,TArray<AChessPoint*>& OutTargets) const
+{
+	
+}
+
+void UChessAttackRule::CollectCannonTargets(AChessPoint* CurrentActor, AChessGameMode* Board,TArray<AChessPoint*>& OutTargets) const
+{
+	
+}
+
+void UChessAttackRule::CollectElephantTargets(AChessPoint* CurrentActor, AChessGameMode* Board,TArray<AChessPoint*>& OutTargets) const
+{
+	
+}
+
+void UChessAttackRule::CollectHorseTargets(AChessPoint* CurrentActor, AChessGameMode* Board,TArray<AChessPoint*>& OutTargets) const
+{
+	
+}
+
+void UChessAttackRule::CollectObiitTargets(AChessPoint* CurrentActor, AChessGameMode* Board,TArray<AChessPoint*>& OutTargets) const
+{
+	
+}
+
+void UChessAttackRule::CollectSoldierTargets(AChessPoint* CurrentActor, AChessGameMode* Board,TArray<AChessPoint*>& OutTargets) const
+{
+	
+}
