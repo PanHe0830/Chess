@@ -31,4 +31,6 @@ protected:
 		bool bWasCancelled
 	) override;
 
+	UFUNCTION()
+	void OnMoveReached();
 };

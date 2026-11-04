@@ -5,6 +5,7 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "Abilities/GameplayAbilityTargetTypes.h"
+#include "Abilities/Tasks/AbilityTask_MoveToLocation.h"
 #include "Chess/ChessGamePlayTag.h"
 #include "GameFramework/Actor.h"
 
@@ -48,12 +49,14 @@ void UChessMoveAbility::ActivateAbility(
 	const FGameplayAbilityTargetData* TargetData = TriggerEventData->TargetData.Get(0);
 	const FVector TargetLocation = TargetData->GetEndPoint();
 
-	Avatar->SetActorLocation(TargetLocation);
-
-	UE_LOG(LogTemp, Warning, TEXT("UChessMoveAbility::ActivateAbility move to %s"),
-		*TargetLocation.ToCompactString());
-
-	EndAbility(Handle, ActorInfo, ActivationInfo, true, false);
+	UAbilityTask_MoveToLocation* MoveTask = UAbilityTask_MoveToLocation::MoveToLocation(this,NAME_None,TargetLocation,0.25,nullptr,nullptr);
+	if (!MoveTask)
+	{
+		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
+		return;
+	}
+	MoveTask->OnTargetLocationReached.AddDynamic(this, &UChessMoveAbility::OnMoveReached);
+	MoveTask->ReadyForActivation();
 }
 
 void UChessMoveAbility::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
@@ -77,4 +80,9 @@ void UChessMoveAbility::EndAbility(const FGameplayAbilitySpecHandle Handle, cons
 		Avatar,
 		ChessGameplayTags::Chess_Attack,
 		AttackEvent);
+}
+
+void UChessMoveAbility::OnMoveReached()
+{
+	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
 }

@@ -21,6 +21,13 @@ AChessPoint::AChessPoint()
 	GameAbilitySystemComponent->SetIsReplicated(true);
 	
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(FName("StaticMesh"));
+	SetRootComponent(StaticMesh);
+	// 仅 Query：可被点选，不与棋盘/棋子产生物理阻挡（避免 MoveToLocation 顶盘）
+	StaticMesh->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	StaticMesh->SetCollisionObjectType(ECC_WorldDynamic);
+	StaticMesh->SetCollisionResponseToAllChannels(ECR_Ignore);
+	StaticMesh->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
+
 	AttributeSet = CreateDefaultSubobject<UChessAttributeSet>(FName("AttributeSet"));
 }
 
