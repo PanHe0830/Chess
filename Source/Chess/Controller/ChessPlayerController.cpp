@@ -43,7 +43,7 @@ void AChessPlayerController::BeginPlay()
 	//}
 }
 
-void AChessPlayerController::AcknowledgePossession(APawn* P)
+void AChessPlayerController::	AcknowledgePossession(APawn* P)
 {
 	Super::AcknowledgePossession(P);
 
