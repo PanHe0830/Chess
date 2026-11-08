@@ -4,6 +4,7 @@
 #include "ChessBoard.h"
 
 #include "Components/StaticMeshComponent.h"
+#include "Net/UnrealNetwork.h"
 
 AChessBoard::AChessBoard()
 {
@@ -36,9 +37,20 @@ FVector2D AChessBoard::GetBoardPoint() const
 	return BoardPoint;
 }
 
+void AChessBoard::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(AChessBoard, BoardPoint);
+}
+
 void AChessBoard::BeginPlay()
 {
 	Super::BeginPlay();
+	
+}
+
+void AChessBoard::OnRep_BoardPoint()
+{
 	
 }
 

@@ -20,13 +20,17 @@ public:
 	
 	FVector2D GetBoardPoint() const;
 
+	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 protected:
 	virtual void BeginPlay() override;
 
 private:
-	UPROPERTY(EditAnywhere , Category = "ChessBoard")
+	UPROPERTY(ReplicatedUsing = OnRep_BoardPoint , EditAnywhere , Category = "ChessBoard")
 	FVector2D BoardPoint;
 	
 	UPROPERTY(EditAnywhere, Category = ChessPoint)
 	UStaticMeshComponent* StaticMesh;
+	
+	UFUNCTION()
+	void OnRep_BoardPoint();
 };

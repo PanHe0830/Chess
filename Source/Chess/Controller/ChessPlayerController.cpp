@@ -21,6 +21,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 
+PRAGMA_DISABLE_OPTIMIZATION
+
 void AChessPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
@@ -272,3 +274,5 @@ void AChessPlayerController::ServerRequestChessMove_Implementation(class AChessP
 		*TargetLocation.ToCompactString(),
 		*TargetLocation.ToCompactString());
 }
+
+PRAGMA_ENABLE_OPTIMIZATION

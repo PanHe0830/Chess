@@ -4,7 +4,7 @@
 #include "ChessMoveCar.h"
 
 #include "Chess/FunCore/UChessStaticFun.h"
-
+PRAGMA_DISABLE_OPTIMIZATION
 bool UChessMoveCar::IsMoveLegal(EChessCamp Camp, const FVector2D& From, const FVector2D& To,
 	const TArray<FVector2D>& OccupiedCells) const
 {
@@ -22,3 +22,4 @@ bool UChessMoveCar::IsMoveLegal(EChessCamp Camp, const FVector2D& From, const FV
 	// 路径上不能有任何棋子挡着
 	return !UChessStaticFun::HasPieceOnPath(From, To, OccupiedCells);
 }
+PRAGMA_ENABLE_OPTIMIZATION
