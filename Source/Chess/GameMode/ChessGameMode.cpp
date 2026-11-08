@@ -15,6 +15,8 @@
 #include "GameFramework/PlayerStart.h"
 #include "Kismet/GameplayStatics.h"
 
+PRAGMA_DISABLE_OPTIMIZATION
+
 void AChessGameMode::BeginPlay()
 {
 	Super::BeginPlay();
@@ -313,7 +315,7 @@ void AChessGameMode::NotifyPlayerReady()
 	}
 
 	const AGameStateBase* GS = GameState;
-	if (!GS || GS->PlayerArray.Num() > 2)
+	if (!GS || GS->PlayerArray.Num() > 1)
 	{
 		return;
 	}
@@ -383,3 +385,5 @@ void AChessGameMode::ChangeChessTurn()
 	}
 	StartChessGameModeTimer();
 }
+
+PRAGMA_ENABLE_OPTIMIZATION
