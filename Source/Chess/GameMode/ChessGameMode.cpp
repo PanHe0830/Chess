@@ -45,27 +45,35 @@ void AChessGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 void AChessGameMode::PostLogin(APlayerController* NewPlayer)
 {
-	if (AChessPlayerState* ChessPS = NewPlayer ? NewPlayer->GetPlayerState<AChessPlayerState>() : nullptr)
-	{
-		const EChessCamp Camp = AssignedPlayerCount == 0
-			? EChessCamp::ECT_Red
-			: EChessCamp::ECT_Blue;
-		ChessPS->SetCamp(Camp);
-		++AssignedPlayerCount;
-	}
-
 	Super::PostLogin(NewPlayer);
-
-	if (APawn* Pawn = NewPlayer ? NewPlayer->GetPawn() : nullptr)
+	
+	if (AChessPlayerState* PS = NewPlayer ? NewPlayer->GetPlayerState<AChessPlayerState>() : nullptr)
 	{
-		Pawn->SetActorHiddenInGame(true);
+		const EChessCamp Need = GetNullCamp();
+		if (Need != EChessCamp::ECT_MAX)
+			PS->SetCamp(Need);
+		
+		if (GetNumPlayers() == 1)
+			GameMode = EGameMode::GM_One;
+		if (GetNumPlayers() == 2)
+			GameMode = EGameMode::GM_Two;
 	}
 }
 
-void AChessGameMode::Tick(float DeltaTime)
+void AChessGameMode::Logout(AController* Exiting)
 {
-	Super::Tick(DeltaTime);
+	Super::Logout(Exiting);
+	
+	if (GetNumPlayers() == 1)
+		GameMode = EGameMode::GM_One;
+	if (GetNumPlayers() == 2)
+		GameMode = EGameMode::GM_Two;
 }
+
+//void AChessGameMode::Tick(float DeltaTime)
+//{
+//	Super::Tick(DeltaTime);
+//}
 
 AActor* AChessGameMode::ChoosePlayerStart_Implementation(AController* Player)
 {
@@ -307,31 +315,33 @@ TMap<FVector2D, TObjectPtr<AChessPoint>> AChessGameMode::GetOccupiedPoints() con
 	return PieceMap;
 }
 
+EGameMode AChessGameMode::GetChessMode() const
+{
+	return GameMode;
+}
+
 void AChessGameMode::NotifyPlayerReady()
 {
-	if (bMatchStarted)
+	if (GetChessMode() == EGameMode::GM_One && GetNumPlayers() == 1)
 	{
-		return;
+		StartChessGameModeTimer();
+		CloseReadyWidgets();
 	}
-
-	const AGameStateBase* GS = GameState;
-	if (!GS || GS->PlayerArray.Num() > 1)
+	
+	if (GetChessMode() == EGameMode::GM_Two && GetNumPlayers() == 2)
 	{
-		return;
-	}
-
-	for (const APlayerState* PS : GS->PlayerArray)
-	{
-		const AChessPlayerState* ChessPS = Cast<AChessPlayerState>(PS);
-		if (!ChessPS || !ChessPS->IsReady())
+		for (const APlayerState* PS : GameState->PlayerArray)
 		{
-			return;
+			const AChessPlayerState* ChessPS = Cast<AChessPlayerState>(PS);
+			if (!ChessPS || !ChessPS->IsReady())
+			{
+				return;
+			}
 		}
+		
+		StartChessGameModeTimer();
+		CloseReadyWidgets();
 	}
-
-	bMatchStarted = true;
-	StartChessGameModeTimer();
-	CloseReadyWidgets();
 }
 
 void AChessGameMode::CloseReadyWidgets()
@@ -349,6 +359,31 @@ void AChessGameMode::CloseReadyWidgets()
 			PC->ClientCloseReadyWidget();
 		}
 	}
+}
+
+EChessCamp AChessGameMode::GetNullCamp() const
+{
+	bool bHasRed = false;
+	bool bHasBlue = false;
+	
+	AChessGameState* GS = GetGameState<AChessGameState>();
+	if (GS)
+	{
+		for (APlayerState* PS : GS->PlayerArray)
+		{
+			if (const AChessPlayerState* ChessPS = Cast<AChessPlayerState>(PS))
+			{
+				if (ChessPS->GetCamp() == EChessCamp::ECT_Red)  bHasRed = true;
+				if (ChessPS->GetCamp() == EChessCamp::ECT_Blue) bHasBlue = true;
+			}
+		}
+	}
+	
+	// 缺谁
+	if (!bHasRed)  { return EChessCamp::ECT_Red; }
+	if (!bHasBlue) { return EChessCamp::ECT_Blue; }
+	
+	return EChessCamp::ECT_MAX;
 }
 
 void AChessGameMode::StartChessGameModeTimer()

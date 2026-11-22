@@ -3,11 +3,21 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Chess/Chess.h"
 #include "GameFramework/GameMode.h"
 #include "ChessGameMode.generated.h"
 
 class AChessBoard;
 class AChessPoint;
+
+UENUM()
+enum class EGameMode : uint8
+{
+	GM_One		UMETA(DisplayName = "One"),
+	GM_Two		UMETA(DisplayName = "Two"),
+	GM_MAX
+};
+
 /**
  * 
  */
@@ -18,14 +28,16 @@ class CHESS_API AChessGameMode : public AGameMode
 protected:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-	virtual void PostLogin(APlayerController* NewPlayer) override;
 public:
-	virtual void Tick( float DeltaTime ) override;
-	
-protected:
+	virtual void PostLogin(APlayerController* NewPlayer) override;
+	virtual void Logout(AController* Exiting) override;
+	//virtual void Tick( float DeltaTime ) override;
 	virtual AActor* ChoosePlayerStart_Implementation(AController* Player) override;
 	virtual APawn* SpawnDefaultPawnAtTransform_Implementation(AController* NewPlayer, const FTransform& SpawnTransform) override;
+	
+protected:
 	virtual void FinishRestartPlayer(AController* NewPlayer, const FRotator& StartRotation) override;
+	
 private:
 	void SpawnChessBoard();
 	void SetChessPoint();
@@ -33,9 +45,7 @@ private:
 	void StopChessGameModeTimer();
 	void ChangeChessTurn();
 	void CloseReadyWidgets();
-
-	bool bMatchStarted = false;
-	int32 AssignedPlayerCount = 0;
+	EChessCamp GetNullCamp() const;
 public:
 	void NotifyPlayerReady();
 	void RegisterChessPoint(AChessPoint* Point);
@@ -45,6 +55,7 @@ public:
 	TObjectPtr<AChessPoint> GetPieceAt(FVector2D Location);
 	TArray<FVector2D> GetOccupiedCells() const;
 	TMap<FVector2D, TObjectPtr<AChessPoint>> GetOccupiedPoints() const;
+	EGameMode GetChessMode() const;
 	UPROPERTY(EditAnywhere , Category = "Chess")
 	TSubclassOf<AChessBoard> ChessBoardClass;
 	UPROPERTY(EditAnywhere , Category = "Chess")
@@ -66,4 +77,6 @@ private:
 	TMap<FVector2D, TObjectPtr<AChessPoint>> PieceMap;
 	
 	FTimerHandle TimerHandle;
+	
+	EGameMode GameMode = EGameMode::GM_MAX;
 };

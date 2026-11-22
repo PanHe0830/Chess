@@ -52,7 +52,7 @@ void UMainWidget::HandleTurnChanged(EChessTurn NewTurn)
 		return;
 	}
 	const FText TurnText = NewTurn == EChessTurn::EXT_Red
-		? FText::FromString(TEXT("红方"))
-		: FText::FromString(TEXT("蓝方"));
+		? FText::FromString(TEXT("Red"))
+		: FText::FromString(TEXT("Blue"));
 	CampName->SetText(TurnText);
 }
